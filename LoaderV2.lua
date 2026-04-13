@@ -59,7 +59,7 @@ local FIRE_CANCEL_BEFORE_RETRADE = true
 local RETRADE_AFTER_CANCEL_DELAY = 0.1
 
 local AUTO_RELOAD_ENABLED = true
-local AUTO_RELOAD_SOURCE_URL = "https://raw.githubusercontent.com/zeusbutdiff/Sailor-Piece-Dupe-Loader/main/Loader.lua"
+local AUTO_RELOAD_SOURCE_URL = "https://raw.githubusercontent.com/zeusbutdiff/Sailor-Piece-Dupe-Loader/main/LoaderV2.lua"
 local AUTO_RELOAD_SOURCE_CODE = ""
 
 local AUTO_HOP_ENABLED = true
