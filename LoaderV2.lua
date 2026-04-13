@@ -94,7 +94,7 @@ local SERVER_HOP_MAX_PAGE_SCANS = 6
 local SERVER_HOP_API_LIMIT = 100
 local SERVER_HOP_RETRY_DELAY = 2.0
 local AUTO_RELOAD_AFTER_SERVER_HOP = true
-local AUTO_RELOAD_SOURCE_URL = "https://raw.githubusercontent.com/zeusbutdiff/Sailor-Piece-Dupe-Loader/main/Loader.lua"
+local AUTO_RELOAD_SOURCE_URL = "https://raw.githubusercontent.com/zeusbutdiff/Sailor-Piece-Dupe-Loader/main/LoaderV2.lua"
 local AUTO_RELOAD_SOURCE_CODE = ""
 
 local inventoryByCategory = {}
