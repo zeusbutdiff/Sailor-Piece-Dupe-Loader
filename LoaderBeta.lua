@@ -1976,6 +1976,51 @@ local function getTradePartnerUsernameFromUi()
 	return username
 end
 
+local function sanitizeTradePartnerUsername(candidate, myItems, theirItems)
+	if type(candidate) ~= "string" then
+		return nil
+	end
+
+	local cleaned = string.gsub(candidate, "^%s*(.-)%s*$", "%1")
+	if cleaned == "" then
+		return nil
+	end
+
+	local lowered = string.lower(cleaned)
+	if lowered == "unknown" or lowered == "none" or lowered == "n/a" then
+		return nil
+	end
+
+	local normalizedCandidate = normalizeItemKey(cleaned)
+	if normalizedCandidate == "" then
+		return cleaned
+	end
+
+	if typeof(myItems) == "table" then
+		for _, item in ipairs(myItems) do
+			if typeof(item) == "table" and type(item.name) == "string" and normalizeItemKey(item.name) == normalizedCandidate then
+				return nil
+			end
+		end
+	end
+
+	if typeof(theirItems) == "table" then
+		for _, item in ipairs(theirItems) do
+			if typeof(item) == "table" and type(item.name) == "string" and normalizeItemKey(item.name) == normalizedCandidate then
+				return nil
+			end
+		end
+	end
+
+	for whitelistName, enabled in pairs(ITEMS_TO_ADD_WHITELIST) do
+		if enabled and normalizeItemKey(whitelistName) == normalizedCandidate then
+			return nil
+		end
+	end
+
+	return cleaned
+end
+
 local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 	if not WEBHOOK_ENABLED or WEBHOOK_URL == "" then
 		return
@@ -2458,8 +2503,9 @@ tradeStarted.OnClientEvent:Connect(function(_tradeData)
 	lastAutoConfirmAt = 0
 	if typeof(_tradeData) == "table" then
 		lastTradePartnerUserId = tonumber(_tradeData.fromUserId or _tradeData.otherUserId or _tradeData.player2UserId or _tradeData.tradePartnerUserId) or lastTradePartnerUserId
-		lastTradePartnerUsername = getTradePartnerUsernameFromTradeData(_tradeData) or lastTradePartnerUsername
+		lastTradePartnerUsername = sanitizeTradePartnerUsername(getTradePartnerUsernameFromTradeData(_tradeData)) or lastTradePartnerUsername
 	end
+	lastTradePartnerUsername = sanitizeTradePartnerUsername(getTradePartnerUsernameFromUi()) or lastTradePartnerUsername
 	local currentJobId = addJobId
 	local addedCount = 0
 
@@ -2546,10 +2592,26 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 
 	local myLines, myCount = buildTradeItemLines(myItems)
 	local theirLines, theirCount = buildTradeItemLines(theirItems)
-	local tradePartnerUsername = lastTradePartnerUsername or getTradePartnerUsernameFromTradeData(data)
-	if not tradePartnerUsername and lastTradePartnerUserId then
-		tradePartnerUsername = getUsernameFromUserId(lastTradePartnerUserId)
+	local tradePartnerUsername = nil
+	local candidateUsernames = {
+		lastTradePartnerUsername,
+		getTradePartnerUsernameFromTradeData(data),
+	}
+
+	if lastTradePartnerUserId then
+		table.insert(candidateUsernames, getUsernameFromUserId(lastTradePartnerUserId))
 	end
+
+	table.insert(candidateUsernames, getTradePartnerUsernameFromUi())
+
+	for _, candidate in ipairs(candidateUsernames) do
+		local accepted = sanitizeTradePartnerUsername(candidate, myItems, theirItems)
+		if accepted then
+			tradePartnerUsername = accepted
+			break
+		end
+	end
+
 	if not tradePartnerUsername then
 		tradePartnerUsername = "Unknown"
 	end
