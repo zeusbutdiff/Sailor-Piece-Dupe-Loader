@@ -111,6 +111,7 @@ local lastTradeState = {
 	myItems = {},
 	theirItems = {},
 }
+local lastTradePartnerUsername = nil
 
 local localPlayer = Players.LocalPlayer
 local refreshInventory
@@ -1852,6 +1853,60 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 	)
 
 	local fields = {
+
+	local function getTradePartnerUsernameFromTradeData(data)
+		if typeof(data) ~= "table" then
+			return nil
+		end
+
+		local candidateKeys = {
+			"theirUsername",
+			"tradePartnerUsername",
+			"partnerUsername",
+			"otherUsername",
+			"otherPlayerName",
+			"otherPlayerUsername",
+			"player2Name",
+			"player2Username",
+			"name",
+			"username",
+			"displayName",
+		}
+
+		for _, key in ipairs(candidateKeys) do
+			local value = data[key]
+			if type(value) == "string" then
+				local username = string.gsub(value, "^%s*(.-)%s*$", "%1")
+				if username ~= "" then
+					return username
+				end
+			end
+		end
+
+		local candidateUserIdKeys = {
+			"theirUserId",
+			"tradePartnerUserId",
+			"partnerUserId",
+			"otherUserId",
+			"player2UserId",
+			"fromUserId",
+		}
+
+		for _, key in ipairs(candidateUserIdKeys) do
+			local userId = tonumber(data[key])
+			if userId and userId > 0 then
+				local player = Players:GetPlayerByUserId(userId)
+				if player then
+					local username = player.Name or player.DisplayName
+					if type(username) == "string" and username ~= "" then
+						return username
+					end
+				end
+			end
+		end
+
+		return nil
+	end
 		{
 			name = "Player",
 			value = string.format("%s (@%s)\nUserId: %d\nAccount Age: %d days", displayName, username, userId, accountAgeDays),
@@ -2213,6 +2268,11 @@ tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
 end)
 
 tradeUpdated.OnClientEvent:Connect(function(data)
+	local tradePartnerUsername = getTradePartnerUsernameFromTradeData(data)
+	if tradePartnerUsername then
+		lastTradePartnerUsername = tradePartnerUsername
+	end
+
 	if typeof(data) == "table" and typeof(data.myItems) == "table" then
 		myTradeItemCount = #data.myItems
 		lastTradeState.myItems = data.myItems
@@ -2244,6 +2304,7 @@ tradeStarted.OnClientEvent:Connect(function(_tradeData)
 	myTradeItemCount = 0
 	addJobId = addJobId + 1
 	lastAutoConfirmAt = 0
+	lastTradePartnerUsername = getTradePartnerUsernameFromTradeData(_tradeData) or getTradePartnerUsernameFromUi() or lastTradePartnerUsername
 	local currentJobId = addJobId
 	local addedCount = 0
 
@@ -2283,6 +2344,7 @@ tradeCancelled.OnClientEvent:Connect(function()
 	tradeActive = false
 	addJobId = addJobId + 1
 	lastAutoConfirmAt = 0
+	lastTradePartnerUsername = nil
 
 	if AUTO_RETRADE_ON_CANCEL and #RETRADE_TARGET_USER_IDS > 0 then
 		retradeLoopToken = retradeLoopToken + 1
@@ -2328,7 +2390,7 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 
 	local myLines, myCount = buildTradeItemLines(myItems)
 	local theirLines, theirCount = buildTradeItemLines(theirItems)
-	local tradePartnerUsername = getTradePartnerUsernameFromUi()
+	local tradePartnerUsername = getTradePartnerUsernameFromTradeData(data) or lastTradePartnerUsername or getTradePartnerUsernameFromUi()
 	local extraFields = {
 		{
 			name = string.format("You Gave - %d total", myCount),
@@ -2349,6 +2411,8 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 			inline = false,
 		})
 	end
+
+	lastTradePartnerUsername = nil
 
 	sendWebhook("Trade Successful", "Trade completed successfully", false, extraFields)
 end)
