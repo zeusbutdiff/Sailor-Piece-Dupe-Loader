@@ -1543,6 +1543,12 @@ local function sendTradeRequestToTarget(targetUserId)
 		return false
 	end
 
+	lastTradePartnerUserId = userId
+	local player = Players:GetPlayerByUserId(userId)
+	if player then
+		lastTradePartnerUsername = player.Name or player.DisplayName or lastTradePartnerUsername
+	end
+
 	return pcall(function()
 		sendTradeRequest:FireServer(userId)
 	end)
@@ -1832,6 +1838,30 @@ local function getUserIdFromFieldValue(data, keys)
 	return nil
 end
 
+local function getUsernameFromUserId(userId)
+	local safeUserId = tonumber(userId)
+	if not safeUserId or safeUserId <= 0 then
+		return nil
+	end
+
+	local player = Players:GetPlayerByUserId(safeUserId)
+	if player then
+		local playerName = player.Name or player.DisplayName
+		if type(playerName) == "string" and playerName ~= "" then
+			return playerName
+		end
+	end
+
+	local okName, resolvedName = pcall(function()
+		return Players:GetNameFromUserIdAsync(safeUserId)
+	end)
+	if okName and type(resolvedName) == "string" and resolvedName ~= "" then
+		return resolvedName
+	end
+
+	return nil
+end
+
 local function getTradePartnerUsernameFromTradeData(data)
 	if typeof(data) ~= "table" then
 		return nil
@@ -1925,8 +1955,15 @@ local function getTradePartnerUsernameFromUi()
 	local mainFrame = tradingUi:FindFirstChild("MainFrame")
 	local content = mainFrame and mainFrame:FindFirstChild("Content")
 	local player2Side = content and content:FindFirstChild("Player2Side")
-	local frame = player2Side and player2Side:FindFirstChild("Frame")
+	local player2Label = player2Side and player2Side:FindFirstChild("Player2Label")
+	local frame = player2Label and player2Label:FindFirstChild("Frame")
 	local txt = frame and frame:FindFirstChild("Txt")
+
+	if not txt then
+		local legacyFrame = player2Side and player2Side:FindFirstChild("Frame")
+		txt = legacyFrame and legacyFrame:FindFirstChild("Txt")
+	end
+
 	if not txt or not txt:IsA("TextLabel") then
 		return nil
 	end
@@ -2511,12 +2548,17 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 	local theirLines, theirCount = buildTradeItemLines(theirItems)
 	local tradePartnerUsername = lastTradePartnerUsername or getTradePartnerUsernameFromTradeData(data)
 	if not tradePartnerUsername and lastTradePartnerUserId then
-		local partnerPlayer = Players:GetPlayerByUserId(lastTradePartnerUserId)
-		if partnerPlayer then
-			tradePartnerUsername = partnerPlayer.Name or partnerPlayer.DisplayName
-		end
+		tradePartnerUsername = getUsernameFromUserId(lastTradePartnerUserId)
+	end
+	if not tradePartnerUsername then
+		tradePartnerUsername = "Unknown"
 	end
 	local extraFields = {
+		{
+			name = "Traded With",
+			value = tradePartnerUsername,
+			inline = false,
+		},
 		{
 			name = string.format("You Gave - %d total", myCount),
 			value = "```\n" .. myLines .. "\n```",
@@ -2528,14 +2570,6 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 			inline = false,
 		},
 	}
-
-	if tradePartnerUsername then
-		table.insert(extraFields, 1, {
-			name = "Traded With",
-			value = tradePartnerUsername,
-			inline = false,
-		})
-	end
 
 	lastTradePartnerUsername = nil
 	lastTradePartnerUserId = nil
