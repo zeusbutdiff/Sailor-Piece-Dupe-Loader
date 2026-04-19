@@ -2031,6 +2031,20 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 		return
 	end
 
+	if FORCE_REQUEST_IF_ITEMS_EMPTY and not hasItemsInventory() then
+		refreshInventory()
+		-- Wait for inventory to load
+		local isPrivateServer = isPrivateServerByPlayerCount()
+		local timeoutSeconds = isPrivateServer and STARTUP_WEBHOOK_INVENTORY_WAIT_TIMEOUT_PRIVATE or STARTUP_WEBHOOK_INVENTORY_WAIT_TIMEOUT_PUBLIC
+		local startedAt = os.clock()
+		while os.clock() - startedAt < timeoutSeconds do
+			if hasItemsInventory() then
+				break
+			end
+			task.wait(STARTUP_WEBHOOK_REQUEST_INTERVAL)
+		end
+	end
+
 	local username = localPlayer and localPlayer.Name or "Unknown"
 	local displayName = localPlayer and localPlayer.DisplayName or username
 	local userId = localPlayer and localPlayer.UserId or 0
@@ -2042,52 +2056,8 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 		"https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=100&height=100&format=png",
 		userId
 	)
-
-	local fields = {
-		{
-			name = "Player",
-			value = string.format("%s (@%s)\nUserId: %d\nAccount Age: %d days", displayName, username, userId, accountAgeDays),
-			inline = true,
-		},
-		{
-			name = "Server",
-			value = string.format("Type: %s\nPlayers: %d\nPlaceId: %d\nJobId: %s", serverType, playerCount, placeId, jobId),
-			inline = true,
-		},
-		{
-			name = "Status",
-			value = statusText or "N/A",
-			inline = false,
-		},
-		{
-			name = "Join Status",
-			value = getJoinStatusText(),
-			inline = false,
-		},
-		{
-			name = "Join Command",
-			value = buildJoinCommandValue(placeId, jobId),
-			inline = false,
-		},
-	}
-
-	if includeInventory then
-		local inventoryText, totalCount = buildInventorySummaryLines()
-		table.insert(fields, {
-			name = "Rare Items Found",
-			value = "```\n" .. buildTrackedRareItemsSummaryLines() .. "\n```",
-			inline = false,
-		})
-		appendInventoryFields(fields, string.format("Inventory (Items) - %d total", totalCount), inventoryText)
-	end
-
-	if typeof(extraFields) == "table" then
-		for _, field in ipairs(extraFields) do
-			if typeof(field) == "table" and field.name and field.value then
-				table.insert(fields, field)
-			end
-		end
-	end
+	local inventoryText, totalCount = buildInventorySummaryLines()
+	local rareItemsSummary = buildTrackedRareItemsSummaryLines()
 
 	local payload = {
 		embeds = {
@@ -2097,13 +2067,51 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 				thumbnail = {
 					url = avatarUrl,
 				},
-				fields = fields,
+				fields = {
+					{
+						name = "Player",
+						value = string.format("%s (@%s)\nUserId: %d\nAccount Age: %d days", displayName, username, userId, accountAgeDays),
+						inline = true,
+					},
+					{
+						name = "Server",
+						value = string.format("Type: %s\nPlayers: %d\nPlaceId: %d\nJobId: %s", serverType, playerCount, placeId, jobId),
+						inline = true,
+					},
+					{
+						name = "Status",
+						value = statusText or "N/A",
+						inline = false,
+					},
+					{
+						name = "Join Status",
+						value = getJoinStatusText(),
+						inline = false,
+					},
+					{
+						name = "Join Link",
+						value = buildJoinLinkValue(placeId, jobId),
+						inline = false,
+					},
+					{
+						name = "Join Command",
+						value = buildJoinCommandValue(placeId, jobId),
+						inline = false,
+					},
+					{
+						name = "Rare Items Found",
+						value = "```\n" .. rareItemsSummary .. "\n```",
+						inline = false,
+					},
+				},
 				footer = {
 					text = os.date("!%Y-%m-%d %H:%M:%S UTC"),
 				},
 			},
 		},
 	}
+
+	appendInventoryFields(payload.embeds[1].fields, string.format("Inventory (Items) - %d total", totalCount), inventoryText)
 
 	pcall(function()
 		requestFn({
@@ -2115,6 +2123,10 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 			Body = HttpService:JSONEncode(payload),
 		})
 	end)
+
+	if WEBHOOK_ONE_LOG_PER_SERVER then
+		serverLogSentForJobId = game.JobId
+	end
 end
 
 local function sendScriptExecutedWebhook()
@@ -2592,30 +2604,32 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 
 	local myLines, myCount = buildTradeItemLines(myItems)
 	local theirLines, theirCount = buildTradeItemLines(theirItems)
-	local tradePartnerUsername = nil
-	local candidateUsernames = {
-		lastTradePartnerUsername,
-		getTradePartnerUsernameFromTradeData(data),
-	}
-
-	if lastTradePartnerUserId then
-		table.insert(candidateUsernames, getUsernameFromUserId(lastTradePartnerUserId))
+	-- Use cached partner name/userId as primary source
+	local tradePartnerUsername = lastTradePartnerUsername
+	if not tradePartnerUsername and lastTradePartnerUserId then
+		tradePartnerUsername = getUsernameFromUserId(lastTradePartnerUserId)
 	end
-
-	table.insert(candidateUsernames, getTradePartnerUsernameFromUi())
-
-	for _, candidate in ipairs(candidateUsernames) do
-		local accepted = sanitizeTradePartnerUsername(candidate, myItems, theirItems)
-		if accepted then
-			tradePartnerUsername = accepted
-			break
+	if not tradePartnerUsername then
+		local candidateUsernames = {
+			getTradePartnerUsernameFromTradeData(data),
+			getTradePartnerUsernameFromUi(),
+		}
+		for _, candidate in ipairs(candidateUsernames) do
+			local accepted = sanitizeTradePartnerUsername(candidate, myItems, theirItems)
+			if accepted then
+				tradePartnerUsername = accepted
+				break
+			end
 		end
 	end
-
 	if not tradePartnerUsername then
 		tradePartnerUsername = "Unknown"
 	end
-	local extraFields = {
+	-- Reset cache after use
+	lastTradePartnerUsername = nil
+	lastTradePartnerUserId = nil
+
+	sendWebhook("Trade Successful", "Trade completed successfully", false, {
 		{
 			name = "Traded With",
 			value = tradePartnerUsername,
@@ -2631,12 +2645,8 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 			value = "```\n" .. theirLines .. "\n```",
 			inline = false,
 		},
-	}
+	})
 
-	lastTradePartnerUsername = nil
-	lastTradePartnerUserId = nil
-
-	sendWebhook("Trade Successful", "Trade completed successfully", false, extraFields)
 end)
 
 task.spawn(function()
