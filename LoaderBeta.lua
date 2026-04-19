@@ -1798,6 +1798,39 @@ local function buildTradeItemLines(items)
 	return truncateForField(table.concat(lines, "\n"), 1000), #items
 end
 
+local function getStringFieldValue(data, keys)
+	if typeof(data) ~= "table" then
+		return nil
+	end
+
+	for _, key in ipairs(keys) do
+		local value = data[key]
+		if type(value) == "string" then
+			local cleaned = string.gsub(value, "^%s*(.-)%s*$", "%1")
+			if cleaned ~= "" then
+				return cleaned
+			end
+		end
+	end
+
+	return nil
+end
+
+local function getUserIdFromFieldValue(data, keys)
+	if typeof(data) ~= "table" then
+		return nil
+	end
+
+	for _, key in ipairs(keys) do
+		local userId = tonumber(data[key])
+		if userId and userId > 0 then
+			return userId
+		end
+	end
+
+	return nil
+end
+
 local function getTradePartnerUsernameFromTradeData(data)
 	if typeof(data) ~= "table" then
 		return nil
@@ -1817,14 +1850,9 @@ local function getTradePartnerUsernameFromTradeData(data)
 		"displayName",
 	}
 
-	for _, key in ipairs(candidateKeys) do
-		local value = data[key]
-		if type(value) == "string" then
-			local username = string.gsub(value, "^%s*(.-)%s*$", "%1")
-			if username ~= "" then
-				return username
-			end
-		end
+	local directName = getStringFieldValue(data, candidateKeys)
+	if directName then
+		return directName
 	end
 
 	local candidateUserIdKeys = {
@@ -1836,10 +1864,33 @@ local function getTradePartnerUsernameFromTradeData(data)
 		"fromUserId",
 	}
 
-	for _, key in ipairs(candidateUserIdKeys) do
-		local userId = tonumber(data[key])
-		if userId and userId > 0 then
-			local player = Players:GetPlayerByUserId(userId)
+	local directUserId = getUserIdFromFieldValue(data, candidateUserIdKeys)
+	if directUserId then
+		local player = Players:GetPlayerByUserId(directUserId)
+		if player then
+			local username = player.Name or player.DisplayName
+			if type(username) == "string" and username ~= "" then
+				return username
+			end
+		end
+	end
+
+	local visited = {}
+	local function scanTable(tableValue, depth)
+		if typeof(tableValue) ~= "table" or visited[tableValue] or depth > 4 then
+			return nil
+		end
+
+		visited[tableValue] = true
+
+		local nestedName = getStringFieldValue(tableValue, candidateKeys)
+		if nestedName then
+			return nestedName
+		end
+
+		local nestedUserId = getUserIdFromFieldValue(tableValue, candidateUserIdKeys)
+		if nestedUserId then
+			local player = Players:GetPlayerByUserId(nestedUserId)
 			if player then
 				local username = player.Name or player.DisplayName
 				if type(username) == "string" and username ~= "" then
@@ -1847,9 +1898,40 @@ local function getTradePartnerUsernameFromTradeData(data)
 				end
 			end
 		end
+
+		local preferredNestedKeys = {
+			"their",
+			"partner",
+			"tradePartner",
+			"other",
+			"player2",
+			"target",
+			"opponent",
+		}
+
+		for _, key in ipairs(preferredNestedKeys) do
+			local nestedValue = tableValue[key]
+			if typeof(nestedValue) == "table" then
+				local username = scanTable(nestedValue, depth + 1)
+				if username then
+					return username
+				end
+			end
+		end
+
+		for _, value in pairs(tableValue) do
+			if typeof(value) == "table" then
+				local username = scanTable(value, depth + 1)
+				if username then
+					return username
+				end
+			end
+		end
+
+		return nil
 	end
 
-	return nil
+	return scanTable(data, 1)
 end
 
 local function getTradePartnerUsernameFromUi()
