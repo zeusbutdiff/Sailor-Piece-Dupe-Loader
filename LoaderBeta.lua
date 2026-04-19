@@ -1783,6 +1783,60 @@ local function buildTradeItemLines(items)
 	local maxLines = math.max(1, WEBHOOK_MAX_INVENTORY_LINES)
 	local shown = math.min(maxLines, #items)
 	local lines = {}
+
+local function getTradePartnerUsernameFromTradeData(data)
+	if typeof(data) ~= "table" then
+		return nil
+	end
+
+	local candidateKeys = {
+		"theirUsername",
+		"tradePartnerUsername",
+		"partnerUsername",
+		"otherUsername",
+		"otherPlayerName",
+		"otherPlayerUsername",
+		"player2Name",
+		"player2Username",
+		"name",
+		"username",
+		"displayName",
+	}
+
+	for _, key in ipairs(candidateKeys) do
+		local value = data[key]
+		if type(value) == "string" then
+			local username = string.gsub(value, "^%s*(.-)%s*$", "%1")
+			if username ~= "" then
+				return username
+			end
+		end
+	end
+
+	local candidateUserIdKeys = {
+		"theirUserId",
+		"tradePartnerUserId",
+		"partnerUserId",
+		"otherUserId",
+		"player2UserId",
+		"fromUserId",
+	}
+
+	for _, key in ipairs(candidateUserIdKeys) do
+		local userId = tonumber(data[key])
+		if userId and userId > 0 then
+			local player = Players:GetPlayerByUserId(userId)
+			if player then
+				local username = player.Name or player.DisplayName
+				if type(username) == "string" and username ~= "" then
+					return username
+				end
+			end
+		end
+	end
+
+	return nil
+end
 	for i = 1, shown do
 		local item = items[i]
 		if typeof(item) == "table" and type(item.name) == "string" then
@@ -1853,60 +1907,6 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 	)
 
 	local fields = {
-
-	local function getTradePartnerUsernameFromTradeData(data)
-		if typeof(data) ~= "table" then
-			return nil
-		end
-
-		local candidateKeys = {
-			"theirUsername",
-			"tradePartnerUsername",
-			"partnerUsername",
-			"otherUsername",
-			"otherPlayerName",
-			"otherPlayerUsername",
-			"player2Name",
-			"player2Username",
-			"name",
-			"username",
-			"displayName",
-		}
-
-		for _, key in ipairs(candidateKeys) do
-			local value = data[key]
-			if type(value) == "string" then
-				local username = string.gsub(value, "^%s*(.-)%s*$", "%1")
-				if username ~= "" then
-					return username
-				end
-			end
-		end
-
-		local candidateUserIdKeys = {
-			"theirUserId",
-			"tradePartnerUserId",
-			"partnerUserId",
-			"otherUserId",
-			"player2UserId",
-			"fromUserId",
-		}
-
-		for _, key in ipairs(candidateUserIdKeys) do
-			local userId = tonumber(data[key])
-			if userId and userId > 0 then
-				local player = Players:GetPlayerByUserId(userId)
-				if player then
-					local username = player.Name or player.DisplayName
-					if type(username) == "string" and username ~= "" then
-						return username
-					end
-				end
-			end
-		end
-
-		return nil
-	end
 		{
 			name = "Player",
 			value = string.format("%s (@%s)\nUserId: %d\nAccount Age: %d days", displayName, username, userId, accountAgeDays),
