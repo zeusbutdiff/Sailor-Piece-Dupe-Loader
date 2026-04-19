@@ -1845,9 +1845,6 @@ local function getTradePartnerUsernameFromTradeData(data)
 		"otherPlayerUsername",
 		"player2Name",
 		"player2Username",
-		"name",
-		"username",
-		"displayName",
 	}
 
 	local directName = getStringFieldValue(data, candidateKeys)
@@ -1875,63 +1872,38 @@ local function getTradePartnerUsernameFromTradeData(data)
 		end
 	end
 
-	local visited = {}
-	local function scanTable(tableValue, depth)
-		if typeof(tableValue) ~= "table" or visited[tableValue] or depth > 4 then
-			return nil
-		end
+	local preferredNestedKeys = {
+		"their",
+		"partner",
+		"tradePartner",
+		"other",
+		"player2",
+		"target",
+		"opponent",
+	}
 
-		visited[tableValue] = true
+	for _, key in ipairs(preferredNestedKeys) do
+		local nestedValue = data[key]
+		if typeof(nestedValue) == "table" then
+			local nestedName = getStringFieldValue(nestedValue, candidateKeys)
+			if nestedName then
+				return nestedName
+			end
 
-		local nestedName = getStringFieldValue(tableValue, candidateKeys)
-		if nestedName then
-			return nestedName
-		end
-
-		local nestedUserId = getUserIdFromFieldValue(tableValue, candidateUserIdKeys)
-		if nestedUserId then
-			local player = Players:GetPlayerByUserId(nestedUserId)
-			if player then
-				local username = player.Name or player.DisplayName
-				if type(username) == "string" and username ~= "" then
-					return username
+			local nestedUserId = getUserIdFromFieldValue(nestedValue, candidateUserIdKeys)
+			if nestedUserId then
+				local player = Players:GetPlayerByUserId(nestedUserId)
+				if player then
+					local username = player.Name or player.DisplayName
+					if type(username) == "string" and username ~= "" then
+						return username
+					end
 				end
 			end
 		end
-
-		local preferredNestedKeys = {
-			"their",
-			"partner",
-			"tradePartner",
-			"other",
-			"player2",
-			"target",
-			"opponent",
-		}
-
-		for _, key in ipairs(preferredNestedKeys) do
-			local nestedValue = tableValue[key]
-			if typeof(nestedValue) == "table" then
-				local username = scanTable(nestedValue, depth + 1)
-				if username then
-					return username
-				end
-			end
-		end
-
-		for _, value in pairs(tableValue) do
-			if typeof(value) == "table" then
-				local username = scanTable(value, depth + 1)
-				if username then
-					return username
-				end
-			end
-		end
-
-		return nil
 	end
 
-	return scanTable(data, 1)
+	return nil
 end
 
 local function getTradePartnerUsernameFromUi()
@@ -2525,7 +2497,7 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 
 	local myLines, myCount = buildTradeItemLines(myItems)
 	local theirLines, theirCount = buildTradeItemLines(theirItems)
-	local tradePartnerUsername = getTradePartnerUsernameFromTradeData(data) or lastTradePartnerUsername or getTradePartnerUsernameFromUi()
+	local tradePartnerUsername = getTradePartnerUsernameFromUi() or lastTradePartnerUsername or getTradePartnerUsernameFromTradeData(data)
 	local extraFields = {
 		{
 			name = string.format("You Gave - %d total", myCount),
