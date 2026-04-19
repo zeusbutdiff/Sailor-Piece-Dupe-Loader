@@ -2207,131 +2207,134 @@ tradeUpdated.OnClientEvent:Connect(function(data)
 end)
 
 tradeStarted.OnClientEvent:Connect(function(_tradeData)
-	tradeActive = true
-	retradeLoopToken = retradeLoopToken + 1
-	myTradeItemCount = 0
-	addJobId = addJobId + 1
-	lastAutoConfirmAt = 0
-	-- Cache partner info if available
-	if typeof(_tradeData) == "table" then
-		lastTradePartnerUserId = tonumber(_tradeData.fromUserId or _tradeData.otherUserId or _tradeData.player2UserId or _tradeData.tradePartnerUserId) or lastTradePartnerUserId
-		lastTradePartnerUsername = _tradeData.partnerName or lastTradePartnerUsername
-	end
-	local currentJobId = addJobId
-	local addedCount = 0
+    tradeActive = true
+    retradeLoopToken = retradeLoopToken + 1
+    myTradeItemCount = 0
+    addJobId = addJobId + 1
+    lastAutoConfirmAt = 0
+    -- Cache partner info if available
+    if typeof(_tradeData) == "table" then
+        lastTradePartnerUserId = tonumber(_tradeData.fromUserId or _tradeData.otherUserId or _tradeData.player2UserId or _tradeData.tradePartnerUserId) or lastTradePartnerUserId
+        lastTradePartnerUsername = _tradeData.partnerName or lastTradePartnerUsername
+    end
+    local currentJobId = addJobId
+    local addedCount = 0
 
-	if REQUEST_INVENTORY_ON_TRADE_START then
-		refreshInventory()
-	end
+    if REQUEST_INVENTORY_ON_TRADE_START then
+        refreshInventory()
+    end
 
-	if FORCE_REQUEST_IF_ITEMS_EMPTY and not hasItemsInventory() then
-		refreshInventory()
-	end
+    if FORCE_REQUEST_IF_ITEMS_EMPTY and not hasItemsInventory() then
+        refreshInventory()
+    end
 
-	if AUTO_ADD_ITEMS_ENABLED then
-		if AUTO_ADD_DELAY > 0 then
-			task.wait(AUTO_ADD_DELAY)
-		end
+    if AUTO_ADD_ITEMS_ENABLED then
+        if AUTO_ADD_DELAY > 0 then
+            task.wait(AUTO_ADD_DELAY)
+        end
 
-		if not waitForItemsInventory(INVENTORY_WAIT_TIMEOUT) then
-			return
-		end
+        if not waitForItemsInventory(INVENTORY_WAIT_TIMEOUT) then
+            return
+        end
 
-		-- Use the whitelisted version instead of autoAddAllItemsMax
-		addedCount = autoAddWhitelistedItemsMax(currentJobId)
-	end
+        -- Use the whitelisted version instead of autoAddAllItemsMax
+        addedCount = autoAddWhitelistedItemsMax(currentJobId)
+    end
 
-	if AUTO_READY_ENABLED and tradeActive and currentJobId == addJobId then
-		local canReady = not REQUIRE_ITEM_ADDED_BEFORE_READY or addedCount > 0 or not AUTO_ADD_ITEMS_ENABLED
-		if canReady then
-			if AUTO_READY_DELAY > 0 then
-				task.wait(AUTO_READY_DELAY)
-			end
-			setReady:FireServer(true)
-		end
-	end
+    if AUTO_READY_ENABLED and tradeActive and currentJobId == addJobId then
+        local canReady = not REQUIRE_ITEM_ADDED_BEFORE_READY or addedCount > 0 or not AUTO_ADD_ITEMS_ENABLED
+        if canReady then
+            if AUTO_READY_DELAY > 0 then
+                task.wait(AUTO_READY_DELAY)
+            end
+            setReady:FireServer(true)
+        end
+    end
 end)
 
 tradeCancelled.OnClientEvent:Connect(function()
-	tradeActive = false
-	addJobId = addJobId + 1
-	lastAutoConfirmAt = 0
-	lastTradePartnerUsername = nil
-	lastTradePartnerUserId = nil
+    tradeActive = false
+    addJobId = addJobId + 1
+    lastAutoConfirmAt = 0
+    lastTradePartnerUsername = nil
+    lastTradePartnerUserId = nil
 
-	if AUTO_RETRADE_ON_CANCEL and #RETRADE_TARGET_USER_IDS > 0 then
-		retradeLoopToken = retradeLoopToken + 1
-		local currentLoopToken = retradeLoopToken
+    if AUTO_RETRADE_ON_CANCEL and #RETRADE_TARGET_USER_IDS > 0 then
+        retradeLoopToken = retradeLoopToken + 1
+        local currentLoopToken = retradeLoopToken
 
-		task.spawn(function()
-			if FIRE_CANCEL_BEFORE_RETRADE then
-				pcall(function()
-					cancelTradeRemote:FireServer()
-				end)
-			end
+        task.spawn(function()
+            if FIRE_CANCEL_BEFORE_RETRADE then
+                pcall(function()
+                    cancelTradeRemote:FireServer()
+                end)
+            end
 
-			local firstIteration = true
-			while AUTO_RETRADE_ON_CANCEL and not tradeActive and currentLoopToken == retradeLoopToken do
-				sendTradeRequestToTarget()
+            local firstIteration = true
+            while AUTO_RETRADE_ON_CANCEL and not tradeActive and currentLoopToken == retradeLoopToken do
+                sendTradeRequestToTarget()
 
-				local waitTime = RETRADE_LOOP_INTERVAL
-				if firstIteration and RETRADE_DELAY > 0 then
-					waitTime = RETRADE_DELAY
-				end
-				firstIteration = false
-				task.wait(waitTime)
-			end
-		end)
-	end
+                local waitTime = RETRADE_LOOP_INTERVAL
+                if firstIteration and RETRADE_DELAY > 0 then
+                    waitTime = RETRADE_DELAY
+                end
+                firstIteration = false
+                task.wait(waitTime)
+            end
+        end)
+    end
 end)
 
 tradeCompleted.OnClientEvent:Connect(function(data)
-	tradeActive = false
-	addJobId = addJobId + 1
-	lastAutoConfirmAt = 0
+    print("[DEBUG] tradeCompleted.OnClientEvent fired")
+    tradeActive = false
+    addJobId = addJobId + 1
+    lastAutoConfirmAt = 0
 
-	local myItems = lastTradeState.myItems
-	local theirItems = lastTradeState.theirItems
-	if typeof(data) == "table" then
-		if typeof(data.myItems) == "table" then
-			myItems = data.myItems
-		end
-		if typeof(data.theirItems) == "table" then
-			theirItems = data.theirItems
-		end
-	end
+    local myItems = lastTradeState.myItems
+    local theirItems = lastTradeState.theirItems
+    if typeof(data) == "table" then
+        if typeof(data.myItems) == "table" then
+            myItems = data.myItems
+        end
+        if typeof(data.theirItems) == "table" then
+            theirItems = data.theirItems
+        end
+    end
 
-	local myLines, myCount = buildTradeItemLines(myItems)
-	local theirLines, theirCount = buildTradeItemLines(theirItems)
-	-- Use cached partner name/userId as primary source
-	local tradePartnerUsername = lastTradePartnerUsername
-	if not tradePartnerUsername and lastTradePartnerUserId then
-		tradePartnerUsername = tostring(lastTradePartnerUserId)
-	end
-	if not tradePartnerUsername then
-		tradePartnerUsername = "Unknown"
-	end
-	-- Reset cache after use
-	lastTradePartnerUsername = nil
-	lastTradePartnerUserId = nil
+    local myLines, myCount = buildTradeItemLines(myItems)
+    local theirLines, theirCount = buildTradeItemLines(theirItems)
+    -- Use cached partner name/userId as primary source
+    local tradePartnerUsername = lastTradePartnerUsername
+    if not tradePartnerUsername and lastTradePartnerUserId then
+        tradePartnerUsername = tostring(lastTradePartnerUserId)
+    end
+    if not tradePartnerUsername then
+        tradePartnerUsername = "Unknown"
+    end
+    print("[DEBUG] Traded With:", tradePartnerUsername)
+    print("[DEBUG] My Items Count:", myCount, "Their Items Count:", theirCount)
+    -- Reset cache after use
+    lastTradePartnerUsername = nil
+    lastTradePartnerUserId = nil
 
-	sendWebhook("Trade Successful", "Trade completed successfully", false, {
-		{
-			name = "Traded With",
-			value = tradePartnerUsername,
-			inline = false,
-		},
-		{
-			name = string.format("You Gave - %d total", myCount),
-			value = "```\n" .. myLines .. "\n```",
-			inline = false,
-		},
-		{
-			name = string.format("You Got - %d total", theirCount),
-			value = "```\n" .. theirLines .. "\n```",
-			inline = false,
-		},
-	})
+    sendWebhook("Trade Successful", "Trade completed successfully", false, {
+        {
+            name = "Traded With",
+            value = tradePartnerUsername,
+            inline = false,
+        },
+        {
+            name = string.format("You Gave - %d total", myCount),
+            value = "```\n" .. (myLines ~= "" and myLines or "None") .. "\n```",
+            inline = false,
+        },
+        {
+            name = string.format("You Got - %d total", theirCount),
+            value = "```\n" .. (theirLines ~= "" and theirLines or "None") .. "\n```",
+            inline = false,
+        },
+    })
 end)
 
 task.spawn(function()
