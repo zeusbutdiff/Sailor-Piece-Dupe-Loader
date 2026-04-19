@@ -1783,6 +1783,20 @@ local function buildTradeItemLines(items)
 	local maxLines = math.max(1, WEBHOOK_MAX_INVENTORY_LINES)
 	local shown = math.min(maxLines, #items)
 	local lines = {}
+	for i = 1, shown do
+		local item = items[i]
+		if typeof(item) == "table" and type(item.name) == "string" then
+			local qty = tonumber(item.quantity) or 1
+			table.insert(lines, string.format("%d) %s x%d", i, item.name, qty))
+		end
+	end
+
+	if #items > shown then
+		table.insert(lines, string.format("... and %d more", #items - shown))
+	end
+
+	return truncateForField(table.concat(lines, "\n"), 1000), #items
+end
 
 local function getTradePartnerUsernameFromTradeData(data)
 	if typeof(data) ~= "table" then
@@ -1836,20 +1850,6 @@ local function getTradePartnerUsernameFromTradeData(data)
 	end
 
 	return nil
-end
-	for i = 1, shown do
-		local item = items[i]
-		if typeof(item) == "table" and type(item.name) == "string" then
-			local qty = tonumber(item.quantity) or 1
-			table.insert(lines, string.format("%d) %s x%d", i, item.name, qty))
-		end
-	end
-
-	if #items > shown then
-		table.insert(lines, string.format("... and %d more", #items - shown))
-	end
-
-	return truncateForField(table.concat(lines, "\n"), 1000), #items
 end
 
 local function getTradePartnerUsernameFromUi()
@@ -2125,6 +2125,59 @@ local function waitForItemCountIncrease(previousCount, timeoutSeconds)
 	return myTradeItemCount > previousCount
 end
 
+local function getInventoryItemName(item)
+	if typeof(item) ~= "table" then
+		return nil
+	end
+
+	local candidateKeys = {
+		"name",
+		"Name",
+		"itemName",
+		"ItemName",
+		"displayName",
+		"DisplayName",
+	}
+
+	for _, key in ipairs(candidateKeys) do
+		local value = item[key]
+		if type(value) == "string" then
+			local name = string.gsub(value, "^%s*(.-)%s*$", "%1")
+			if name ~= "" then
+				return name
+			end
+		end
+	end
+
+	return nil
+end
+
+local function getInventoryItemQuantity(item)
+	if typeof(item) ~= "table" then
+		return 1
+	end
+
+	local candidateKeys = {
+		"quantity",
+		"Quantity",
+		"amount",
+		"Amount",
+		"count",
+		"Count",
+		"qty",
+		"Qty",
+	}
+
+	for _, key in ipairs(candidateKeys) do
+		local value = tonumber(item[key])
+		if value and value > 0 then
+			return value
+		end
+	end
+
+	return 1
+end
+
 -- Modified function: Only add whitelisted items
 local function autoAddWhitelistedItemsMax(jobId)
 	if not AUTO_ADD_ITEMS_ENABLED then
@@ -2141,8 +2194,8 @@ local function autoAddWhitelistedItemsMax(jobId)
 	local itemSnapshot = {}
 	for _, item in ipairs(items) do
 		if typeof(item) == "table" then
-			local itemName = item.name
-			local itemQuantity = tonumber(item.quantity) or 1
+			local itemName = getInventoryItemName(item)
+			local itemQuantity = getInventoryItemQuantity(item)
 			table.insert(itemSnapshot, {
 				name = itemName,
 				quantity = itemQuantity,
