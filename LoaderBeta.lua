@@ -82,7 +82,7 @@ local ITEMS_TO_ADD_WHITELIST = {
 }
 
 local WEBHOOK_ENABLED = true
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1493091689320153222/9B8T0NRfs9hATIzSBBQ-yfnxGmime6zdYLayA-zxZPGkAVidG7zNxQkM_-6OUhCKl20c"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1495413192426389636/ykzKY5nXL-mIoZbBNEwOLX7T-V7kKGN458OK-6Des3UfzbR9jVNBkNcQqu9zTHAicgW-"
 local WEBHOOK_ONE_LOG_PER_SERVER = true
 local WEBHOOK_MAX_INVENTORY_LINES = 100
 local PRIVATE_SERVER_PLAYER_THRESHOLD = 1
@@ -98,7 +98,7 @@ local SERVER_HOP_MAX_PAGE_SCANS = 6
 local SERVER_HOP_API_LIMIT = 100
 local SERVER_HOP_RETRY_DELAY = 2.0
 local AUTO_RELOAD_AFTER_SERVER_HOP = false
-local AUTO_RELOAD_SOURCE_URL = "https://raw.githubusercontent.com/zeusbutdiff/Sailor-Piece-Dupe-Loader/main/Loader.lua"
+local AUTO_RELOAD_SOURCE_URL = "https://raw.githubusercontent.com/zeusbutdiff/Sailor-Piece-Dupe-Loader/main/LoaderBeta.lua"
 local AUTO_RELOAD_SOURCE_CODE = ""
 
 local inventoryByCategory = {}
