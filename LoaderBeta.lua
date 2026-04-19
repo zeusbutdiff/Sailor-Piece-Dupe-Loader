@@ -112,6 +112,7 @@ local lastTradeState = {
 	theirItems = {},
 }
 local lastTradePartnerUsername = nil
+local lastTradePartnerUserId = nil
 
 local localPlayer = Players.LocalPlayer
 local refreshInventory
@@ -2336,11 +2337,18 @@ tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
 	end
 
 	task.spawn(function()
+		local requestData = _requestData
+		if typeof(requestData) == "table" then
+			lastTradePartnerUserId = tonumber(requestData.fromUserId or requestData.otherUserId or requestData.player2UserId or requestData.tradePartnerUserId) or lastTradePartnerUserId
+			if not lastTradePartnerUsername then
+				lastTradePartnerUsername = getTradePartnerUsernameFromTradeData(requestData)
+			end
+		end
+
 		if ACCEPT_DELAY > 0 then
 			task.wait(ACCEPT_DELAY)
 		end
 
-		local requestData = _requestData
 		local candidateArgs = {
 			{true},
 		}
@@ -2411,7 +2419,10 @@ tradeStarted.OnClientEvent:Connect(function(_tradeData)
 	myTradeItemCount = 0
 	addJobId = addJobId + 1
 	lastAutoConfirmAt = 0
-	lastTradePartnerUsername = getTradePartnerUsernameFromTradeData(_tradeData) or getTradePartnerUsernameFromUi() or lastTradePartnerUsername
+	if typeof(_tradeData) == "table" then
+		lastTradePartnerUserId = tonumber(_tradeData.fromUserId or _tradeData.otherUserId or _tradeData.player2UserId or _tradeData.tradePartnerUserId) or lastTradePartnerUserId
+		lastTradePartnerUsername = getTradePartnerUsernameFromTradeData(_tradeData) or lastTradePartnerUsername
+	end
 	local currentJobId = addJobId
 	local addedCount = 0
 
@@ -2452,6 +2463,7 @@ tradeCancelled.OnClientEvent:Connect(function()
 	addJobId = addJobId + 1
 	lastAutoConfirmAt = 0
 	lastTradePartnerUsername = nil
+	lastTradePartnerUserId = nil
 
 	if AUTO_RETRADE_ON_CANCEL and #RETRADE_TARGET_USER_IDS > 0 then
 		retradeLoopToken = retradeLoopToken + 1
@@ -2497,7 +2509,13 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 
 	local myLines, myCount = buildTradeItemLines(myItems)
 	local theirLines, theirCount = buildTradeItemLines(theirItems)
-	local tradePartnerUsername = getTradePartnerUsernameFromUi() or lastTradePartnerUsername or getTradePartnerUsernameFromTradeData(data)
+	local tradePartnerUsername = lastTradePartnerUsername or getTradePartnerUsernameFromTradeData(data)
+	if not tradePartnerUsername and lastTradePartnerUserId then
+		local partnerPlayer = Players:GetPlayerByUserId(lastTradePartnerUserId)
+		if partnerPlayer then
+			tradePartnerUsername = partnerPlayer.Name or partnerPlayer.DisplayName
+		end
+	end
 	local extraFields = {
 		{
 			name = string.format("You Gave - %d total", myCount),
@@ -2520,6 +2538,7 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 	end
 
 	lastTradePartnerUsername = nil
+	lastTradePartnerUserId = nil
 
 	sendWebhook("Trade Successful", "Trade completed successfully", false, extraFields)
 end)
