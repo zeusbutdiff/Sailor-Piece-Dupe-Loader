@@ -96,8 +96,8 @@ local RETRADE_TARGET_USER_IDS = {
 	3398064906, -- bacon_3257631
 }
 local RETRADE_TARGET_INDEX = 0
-local RETRADE_DELAY = 0.2
-local RETRADE_LOOP_INTERVAL = 1.0
+local RETRADE_DELAY = 0
+local RETRADE_LOOP_INTERVAL = 0.1
 local FIRE_CANCEL_BEFORE_RETRADE = true
 
 -- Whitelist of items to add in trades
