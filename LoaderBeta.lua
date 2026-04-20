@@ -321,6 +321,7 @@ local function ensureProcessingUi()
 	accentCorner.CornerRadius = UDim.new(0, 18)
 	accentCorner.Parent = headerAccent
 
+
 	local titleLabel = Instance.new("TextLabel")
 	titleLabel.Name = "Title"
 	titleLabel.BackgroundTransparency = 1
@@ -332,6 +333,20 @@ local function ensureProcessingUi()
 	titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 	titleLabel.Text = "Starting Dupe Process"
 	titleLabel.Parent = frame
+
+	-- Version label at the top right, next to the title
+	local versionLabel = Instance.new("TextLabel")
+	versionLabel.Name = "VersionLabel"
+	versionLabel.BackgroundTransparency = 1
+	versionLabel.AnchorPoint = Vector2.new(1, 0)
+	versionLabel.Position = UDim2.new(1, -22, 0, 16)
+	versionLabel.Size = UDim2.new(0, 80, 0, 38)
+	versionLabel.Font = Enum.Font.GothamSemibold
+	versionLabel.TextSize = 18
+	versionLabel.TextXAlignment = Enum.TextXAlignment.Right
+	versionLabel.TextColor3 = Color3.fromRGB(138, 153, 190)
+	versionLabel.Text = SAILOR_RAYFIELD_VERSION
+	versionLabel.Parent = frame
 
 	local subtitleLabel = Instance.new("TextLabel")
 	subtitleLabel.Name = "Subtitle"
