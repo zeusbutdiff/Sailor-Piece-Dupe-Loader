@@ -2178,6 +2178,7 @@ if updateInventory then
 end
 
 tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
+		print("[AUTO-ACCEPT DEBUG] Full trade request data:", HttpService:JSONEncode(_requestData))
 	if not AUTO_ACCEPT_ENABLED then
 		return
 	end
