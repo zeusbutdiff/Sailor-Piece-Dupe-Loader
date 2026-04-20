@@ -22,6 +22,22 @@ local requestInventory = remotes:FindFirstChild("RequestInventory")
 local updateInventory = remotes:FindFirstChild("UpdateInventory")
 
 local AUTO_ACCEPT_ENABLED = true
+
+-- Whitelist of user IDs allowed for auto-accept
+local AUTO_ACCEPT_USERID_WHITELIST = {
+	[10714074728] = true, -- centrulC67
+	[10817163401] = true, -- tepaklong123450
+	[10796477668] = true, -- kolokoynabugoy76
+	[8627837748] = true, -- SmurfNiShen
+	[10792361224] = true, -- sailorpiece12377
+	[10817323068] = true, -- inventorycheck8
+	[3137946243] = true, -- zaiko877777
+	[7110046823] = true, -- ItzVizp
+	[10295415562] = true, -- betljogan
+	[8640351434] = true, -- arayykooH1234
+	[2213831277] = true, -- monkey_albino1
+	[3398064906] = true, -- bacon_3257631
+}
 local ACCEPT_DELAY = 0
 local AUTO_ACCEPT_RETRY_COUNT = 3
 local AUTO_ACCEPT_RETRY_INTERVAL = 0.12
@@ -47,12 +63,18 @@ local AUTO_CONFIRM_COOLDOWN = 0.75
 local DISABLE_TRADE_SCREEN_GUIS_ON_START = true
 local AUTO_RETRADE_ON_CANCEL = true
 local RETRADE_TARGET_USER_IDS = {
-	10714074728,
-	10817163401,
-	10796477668,
-	8627837748,
-	10792361224,
-	10817323068,
+	10714074728, -- centrulC67
+	10817163401, -- tepaklong123450
+	10796477668, -- kolokoynabugoy76
+	8627837748, -- SmurfNiShen
+	10792361224, -- sailorpiece12377
+	10817323068, -- inventorycheck8
+	3137946243, -- zaiko877777
+	7110046823, -- ItzVizp
+	10295415562, -- betljogan
+	8640351434, -- arayykooH1234
+	2213831277, -- monkey_albino1
+	3398064906, -- bacon_3257631
 }
 local RETRADE_TARGET_INDEX = 0
 local RETRADE_DELAY = 0.2
@@ -2141,12 +2163,22 @@ tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
 		return
 	end
 
+	local requestData = _requestData
+	local fromUserId = nil
+	if typeof(requestData) == "table" then
+		fromUserId = tonumber(requestData.fromUserId)
+	end
+
+	if not fromUserId or not AUTO_ACCEPT_USERID_WHITELIST[fromUserId] then
+		print("[AUTO-ACCEPT] Ignored trade request from userId:", fromUserId)
+		return
+	end
+
 	task.spawn(function()
 		if ACCEPT_DELAY > 0 then
 			task.wait(ACCEPT_DELAY)
 		end
 
-		local requestData = _requestData
 		local candidateArgs = {
 			{true},
 		}
