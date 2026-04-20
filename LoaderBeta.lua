@@ -1294,6 +1294,26 @@ local function createSailorUi()
 			end)
 
 			if okWindow and window then
+				-- Inject version label into Rayfield main window
+				pcall(function()
+					local mainGui = window and window.Main or (window and window.Display) or nil
+					if mainGui and mainGui:IsA("ScreenGui") or (mainGui and mainGui:IsA("Frame")) then
+						local versionLabel = Instance.new("TextLabel")
+						versionLabel.Name = "VersionLabel"
+						versionLabel.Text = SAILOR_RAYFIELD_VERSION
+						versionLabel.BackgroundTransparency = 1
+						versionLabel.TextColor3 = Color3.fromRGB(180, 200, 255)
+						versionLabel.Font = Enum.Font.GothamBold
+						versionLabel.TextSize = 16
+						versionLabel.AnchorPoint = Vector2.new(1, 0)
+						versionLabel.Position = UDim2.new(1, -12, 0, 8)
+						versionLabel.Size = UDim2.new(0, 120, 0, 22)
+						versionLabel.TextXAlignment = Enum.TextXAlignment.Right
+						versionLabel.TextYAlignment = Enum.TextYAlignment.Top
+						versionLabel.ZIndex = 1000
+						versionLabel.Parent = mainGui
+					end
+				end)
 				pcall(function()
 					local opTab = window:CreateTab("OP", 4483362458)
 					uiInventoryStatusParagraph = opTab:CreateParagraph({
