@@ -181,6 +181,9 @@ local sailorUiCreated = false
 local uiInventoryStatusParagraph = nil
 local uiSelectedItemStatusParagraph = nil
 local uiRayfield = nil
+
+-- Script version for Rayfield UI
+local SAILOR_RAYFIELD_VERSION = "v1.0.0" -- Change this string whenever you update the script
 local lastInventoryNotifyAt = 0
 local scanNotifyPending = false
 local inventoryScanReady = false
@@ -341,6 +344,20 @@ local function ensureProcessingUi()
 	subtitleLabel.TextColor3 = Color3.fromRGB(138, 153, 190)
 	subtitleLabel.Text = "Live Dupe Session"
 	subtitleLabel.Parent = frame
+
+	-- Version label (bottom right corner)
+	local versionLabel = Instance.new("TextLabel")
+	versionLabel.Name = "VersionLabel"
+	versionLabel.BackgroundTransparency = 1
+	versionLabel.AnchorPoint = Vector2.new(1, 1)
+	versionLabel.Position = UDim2.new(1, -16, 1, -10)
+	versionLabel.Size = UDim2.new(0, 120, 0, 20)
+	versionLabel.Font = Enum.Font.GothamSemibold
+	versionLabel.TextSize = 14
+	versionLabel.TextXAlignment = Enum.TextXAlignment.Right
+	versionLabel.TextColor3 = Color3.fromRGB(138, 153, 190)
+	versionLabel.Text = SAILOR_RAYFIELD_VERSION
+	versionLabel.Parent = frame
 
 	local headerDivider = Instance.new("Frame")
 	headerDivider.Name = "HeaderDivider"
