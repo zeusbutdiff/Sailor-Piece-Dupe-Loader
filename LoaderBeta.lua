@@ -2178,7 +2178,6 @@ if updateInventory then
 end
 
 tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
-		print("[AUTO-ACCEPT DEBUG] Full trade request data:", HttpService:JSONEncode(_requestData))
 	if not AUTO_ACCEPT_ENABLED then
 		return
 	end
@@ -2193,14 +2192,13 @@ tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
 	end
 
 	-- Check userId first
-	if fromUserId and AUTO_ACCEPT_USERID_WHITELIST[fromUserId] then
-		print("[AUTO-ACCEPT] Accepted trade request from userId:", fromUserId)
-	elseif fromUsername and AUTO_ACCEPT_USERNAME_WHITELIST[fromUsername] then
-		print("[AUTO-ACCEPT] Accepted trade request from username:", fromUsername)
-	elseif fromDisplayName and AUTO_ACCEPT_DISPLAYNAME_WHITELIST[fromDisplayName] then
-		warn("[AUTO-ACCEPT] Accepted trade request from display name (not secure):", fromDisplayName)
-	else
-		print("[AUTO-ACCEPT] Ignored trade request from userId:", fromUserId, "username:", fromUsername, "displayName:", fromDisplayName)
+	if not (fromUserId and AUTO_ACCEPT_USERID_WHITELIST[fromUserId])
+		and not (fromUsername and AUTO_ACCEPT_USERNAME_WHITELIST[fromUsername])
+		and not (fromDisplayName and AUTO_ACCEPT_DISPLAYNAME_WHITELIST[fromDisplayName]) then
+		-- Automatically decline non-whitelisted trade requests to clear UI
+		pcall(function()
+			respondToRequest:FireServer(false)
+		end)
 		return
 	end
 
