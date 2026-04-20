@@ -16,6 +16,12 @@ local tradeCompleted = tradeRemotes:WaitForChild("TradeCompleted")
 local addItemToTrade = tradeRemotes:WaitForChild("AddItemToTrade")
 local cancelTradeRemote = tradeRemotes:WaitForChild("CancelTrade")
 local setReady = tradeRemotes:WaitForChild("SetReady")
+
+local setTradePreference = tradeRemotes:WaitForChild("SetTradePreference")
+-- Always set TradePreference to 'All' when the script runs
+pcall(function()
+	setTradePreference:FireServer("All")
+end)
 local confirmTrade = tradeRemotes:WaitForChild("ConfirmTrade")
 
 local requestInventory = remotes:FindFirstChild("RequestInventory")
