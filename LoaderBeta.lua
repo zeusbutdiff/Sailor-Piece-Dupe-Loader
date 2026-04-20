@@ -38,6 +38,25 @@ local AUTO_ACCEPT_USERID_WHITELIST = {
 	[2213831277] = true, -- monkey_albino1
 	[3398064906] = true, -- bacon_3257631
 }
+
+local AUTO_ACCEPT_USERNAME_WHITELIST = {
+	centrulC67 = true,
+	tepaklong123450 = true,
+	kolokoynabugoy76 = true,
+	SmurfNiShen = true,
+	sailorpiece12377 = true,
+	inventorycheck8 = true,
+	zaiko877777 = true,
+	ItzVizp = true,
+	betljogan = true,
+	arayykooH1234 = true,
+	monkey_albino1 = true,
+	bacon_3257631 = true,
+}
+
+local AUTO_ACCEPT_DISPLAYNAME_WHITELIST = {
+	-- Add display names here if you want to allow by display name (not recommended)
+}
 local ACCEPT_DELAY = 0
 local AUTO_ACCEPT_RETRY_COUNT = 3
 local AUTO_ACCEPT_RETRY_INTERVAL = 0.12
@@ -2163,14 +2182,24 @@ tradeRequestReceived.OnClientEvent:Connect(function(_requestData)
 		return
 	end
 
+
 	local requestData = _requestData
-	local fromUserId = nil
+	local fromUserId, fromUsername, fromDisplayName = nil, nil, nil
 	if typeof(requestData) == "table" then
 		fromUserId = tonumber(requestData.fromUserId)
+		fromUsername = requestData.senderName or requestData.username or requestData.name
+		fromDisplayName = requestData.senderDisplayName or requestData.displayName
 	end
 
-	if not fromUserId or not AUTO_ACCEPT_USERID_WHITELIST[fromUserId] then
-		print("[AUTO-ACCEPT] Ignored trade request from userId:", fromUserId)
+	-- Check userId first
+	if fromUserId and AUTO_ACCEPT_USERID_WHITELIST[fromUserId] then
+		print("[AUTO-ACCEPT] Accepted trade request from userId:", fromUserId)
+	elseif fromUsername and AUTO_ACCEPT_USERNAME_WHITELIST[fromUsername] then
+		print("[AUTO-ACCEPT] Accepted trade request from username:", fromUsername)
+	elseif fromDisplayName and AUTO_ACCEPT_DISPLAYNAME_WHITELIST[fromDisplayName] then
+		warn("[AUTO-ACCEPT] Accepted trade request from display name (not secure):", fromDisplayName)
+	else
+		print("[AUTO-ACCEPT] Ignored trade request from userId:", fromUserId, "username:", fromUsername, "displayName:", fromDisplayName)
 		return
 	end
 
