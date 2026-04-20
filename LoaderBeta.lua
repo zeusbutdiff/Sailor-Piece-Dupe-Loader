@@ -3,7 +3,6 @@ local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local StarterGui = game:GetService("StarterGui")
 local TeleportService = game:GetService("TeleportService")
-
 local remotes = ReplicatedStorage:WaitForChild("Remotes")
 local tradeRemotes = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("TradeRemotes")
 local respondToRequest = tradeRemotes:WaitForChild("RespondToRequest")
@@ -341,18 +340,18 @@ local function ensureProcessingUi()
 	titleLabel.Parent = frame
 
 	-- Version label at the top right, next to the title
-	local versionLabel = Instance.new("TextLabel")
-	versionLabel.Name = "VersionLabel"
-	versionLabel.BackgroundTransparency = 1
-	versionLabel.AnchorPoint = Vector2.new(1, 0)
-	versionLabel.Position = UDim2.new(1, -22, 0, 16)
-	versionLabel.Size = UDim2.new(0, 80, 0, 38)
-	versionLabel.Font = Enum.Font.GothamSemibold
-	versionLabel.TextSize = 18
-	versionLabel.TextXAlignment = Enum.TextXAlignment.Right
-	versionLabel.TextColor3 = Color3.fromRGB(138, 153, 190)
-	versionLabel.Text = SAILOR_RAYFIELD_VERSION
-	versionLabel.Parent = frame
+	local versionLabelTop = Instance.new("TextLabel")
+	versionLabelTop.Name = "VersionLabelTop"
+	versionLabelTop.BackgroundTransparency = 1
+	versionLabelTop.AnchorPoint = Vector2.new(1, 0)
+	versionLabelTop.Position = UDim2.new(1, -22, 0, 16)
+	versionLabelTop.Size = UDim2.new(0, 80, 0, 38)
+	versionLabelTop.Font = Enum.Font.GothamSemibold
+	versionLabelTop.TextSize = 18
+	versionLabelTop.TextXAlignment = Enum.TextXAlignment.Right
+	versionLabelTop.TextColor3 = Color3.fromRGB(138, 153, 190)
+	versionLabelTop.Text = SAILOR_RAYFIELD_VERSION
+	versionLabelTop.Parent = frame
 
 	local subtitleLabel = Instance.new("TextLabel")
 	subtitleLabel.Name = "Subtitle"
@@ -367,18 +366,18 @@ local function ensureProcessingUi()
 	subtitleLabel.Parent = frame
 
 	-- Version label (bottom right corner)
-	local versionLabel = Instance.new("TextLabel")
-	versionLabel.Name = "VersionLabel"
-	versionLabel.BackgroundTransparency = 1
-	versionLabel.AnchorPoint = Vector2.new(1, 1)
-	versionLabel.Position = UDim2.new(1, -16, 1, -10)
-	versionLabel.Size = UDim2.new(0, 120, 0, 20)
-	versionLabel.Font = Enum.Font.GothamSemibold
-	versionLabel.TextSize = 14
-	versionLabel.TextXAlignment = Enum.TextXAlignment.Right
-	versionLabel.TextColor3 = Color3.fromRGB(138, 153, 190)
-	versionLabel.Text = SAILOR_RAYFIELD_VERSION
-	versionLabel.Parent = frame
+	local versionLabelBottom = Instance.new("TextLabel")
+	versionLabelBottom.Name = "VersionLabelBottom"
+	versionLabelBottom.BackgroundTransparency = 1
+	versionLabelBottom.AnchorPoint = Vector2.new(1, 1)
+	versionLabelBottom.Position = UDim2.new(1, -16, 1, -10)
+	versionLabelBottom.Size = UDim2.new(0, 120, 0, 20)
+	versionLabelBottom.Font = Enum.Font.GothamSemibold
+	versionLabelBottom.TextSize = 14
+	versionLabelBottom.TextXAlignment = Enum.TextXAlignment.Right
+	versionLabelBottom.TextColor3 = Color3.fromRGB(138, 153, 190)
+	versionLabelBottom.Text = SAILOR_RAYFIELD_VERSION
+	versionLabelBottom.Parent = frame
 
 	local headerDivider = Instance.new("Frame")
 	headerDivider.Name = "HeaderDivider"
